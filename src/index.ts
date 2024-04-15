@@ -95,7 +95,6 @@ app.post("/upload-image", async (req, res) => {
     }
 })
 
-
 app.listen(port, () => {
     console.log(`server up and running on port: ${port}`)
 })
