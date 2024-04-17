@@ -95,6 +95,51 @@ app.post("/upload-image", async (req, res) => {
     }
 })
 
+const retryPendingTasks = async () => {
+    const pendingTasks = await db.image.findMany({
+        where: { status: 'ONGOING' },
+    });
+    if (pendingTasks.length > 0) {
+        // Retry enqueueing each task to RabbitMQ
+        amqp.connect('amqp://localhost', function (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) {
+            if (error0) {
+                throw error0;
+            }
+            connection.createChannel(function (error1, channel) {
+                if (error1) {
+                    throw error1;
+                }
+                const queue = 'periodic_update';
+
+                channel.assertQueue(queue, {
+                    durable: false
+                });
+
+                // Enqueue each pending task
+                for (const task of pendingTasks) {
+                    const data = JSON.stringify({
+                        id: task.id,
+                        productid: task.productId,
+                        url: task.url,
+                    });
+
+                    channel.sendToQueue(queue, Buffer.from(data));
+                }
+
+                setTimeout(function () {
+                    connection.close();
+                }, 500);
+            });
+        });
+
+        console.log(`Enqueued ${pendingTasks.length} tasks to RabbitMQ.`);
+    } else {
+        console.log('No pending tasks found.');
+    }
+}
+
+setInterval(retryPendingTasks, 10000);
+
 app.listen(port, () => {
     console.log(`server up and running on port: ${port}`)
 })
