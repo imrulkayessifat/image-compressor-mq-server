@@ -7,12 +7,16 @@ const amqp = require('amqplib/callback_api');
 const app = express();
 const port = process.env.PORT || 3001;
 
+import subscribeRouter from './routes/subscribe.router';
+
 app.use(express.json())
 
 app.use(cors());
 app.options('*', cors());
 
 const db = new PrismaClient();
+
+app.use("/subscribe", subscribeRouter)
 
 app.get("/", (req, res) => {
     res.json({ message: "demo response" }).status(200)
