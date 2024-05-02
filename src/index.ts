@@ -8,6 +8,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 import subscribeRouter from './routes/subscribe.router';
+import storeRouter from './routes/store.router';
 
 app.use(express.json())
 
@@ -16,6 +17,7 @@ app.options('*', cors());
 
 const db = new PrismaClient();
 
+app.use("/store", storeRouter)
 app.use("/subscribe", subscribeRouter)
 
 app.get("/", (req, res) => {
@@ -26,7 +28,7 @@ app.post("/compress-image", async (req, res) => {
     try {
         const compressData = req.body;
 
-        const { id, productid, url } = compressData;
+        const { id, productid, url, storeName } = compressData;
 
         await db.image.update({
             where: { id: id },
@@ -47,7 +49,7 @@ app.post("/compress-image", async (req, res) => {
                 channel.assertQueue(queue, {
                     durable: false
                 });
-                const data = JSON.stringify({ id, productid, url });
+                const data = JSON.stringify({ id, productid, url, storeName });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent %s", id);
             });

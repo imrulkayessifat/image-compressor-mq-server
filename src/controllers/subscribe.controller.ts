@@ -7,7 +7,7 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
     const charge = {
         recurring_application_charge: {
             name: req.body.plan,
-            price: 4.99,
+            price: req.body.price,
             return_url: `${process.env.FRONTEND_DOMAIN}/plans`,
             test: true
         }
@@ -36,14 +36,15 @@ export const getSingleChargeData = async (req: Request, res: Response): Promise<
 
     const data = await response.json() as any;
 
-    console.log(data.recurring_application_charge)
+    const charge_id = `${data.recurring_application_charge.id}`;
     if (data.recurring_application_charge.status === 'active') {
         await db.store.update({
             where: {
                 name: req.body.storeName
             },
             data: {
-                plan: data.recurring_application_charge.name
+                plan: data.recurring_application_charge.name,
+                chargeId:charge_id
             }
         })
     }
