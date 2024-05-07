@@ -9,6 +9,7 @@ const port = process.env.PORT || 3001;
 
 import subscribeRouter from './routes/subscribe.router';
 import storeRouter from './routes/store.router';
+import renameRouter from './routes/rename.router';
 
 app.use(express.json())
 
@@ -19,6 +20,7 @@ const db = new PrismaClient();
 
 app.use("/store", storeRouter)
 app.use("/subscribe", subscribeRouter)
+app.use("/rename",renameRouter)
 
 app.get("/", (req, res) => {
     res.json({ message: "demo response" }).status(200)
