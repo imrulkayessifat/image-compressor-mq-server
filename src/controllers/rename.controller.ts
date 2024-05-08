@@ -35,3 +35,32 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
     res.status(200).json({ data: updateImageName })
 
 }
+
+export const altRename = async (req: Request, res: Response): Promise<void> => {
+    const imageId = req.body.id;
+
+    const imageData = await db.image.findFirst({
+        where: {
+            id: imageId
+        }
+    })
+
+    const productData = await db.product.findFirst({
+        where: {
+            id: imageData?.productId
+        }
+    })
+
+    const altRename = `${productData?.title}-${imageId}.${imageData?.name?.split('.').pop()}`
+
+    const updateImageAltName = await db.image.update({
+        where: {
+            id: imageId
+        },
+        data: {
+            alt: altRename
+        }
+    })
+
+    res.status(200).json({ data: updateImageAltName })
+}
