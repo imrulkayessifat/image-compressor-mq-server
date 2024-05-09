@@ -45,7 +45,7 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
 }
 
 export const getSingleChargeData = async (req: Request, res: Response): Promise<void> => {
-    console.log(req.body)
+    
     const chargeId = req.body.chargeId
 
     const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
