@@ -9,6 +9,7 @@ import subscribeRouter from './routes/subscribe.router';
 import storeRouter from './routes/store.router';
 import renameRouter from './routes/rename.router';
 import imageRouter from './routes/image.router';
+import uploadcareRouter from './routes/uploadcare.router';
 
 
 const app = express();
@@ -24,6 +25,7 @@ app.use("/store", storeRouter);
 app.use("/subscribe", subscribeRouter);
 app.use("/rename", renameRouter);
 app.use("/image", imageRouter)
+app.use("/uploadcare",uploadcareRouter)
 
 app.get("/", (req, res) => {
     res.json({ message: "demo response" }).status(200);
