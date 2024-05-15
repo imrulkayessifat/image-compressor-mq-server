@@ -10,7 +10,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             name: req.body.storeName
         }
     })
-
+    console.log(response)
     res.status(200).json({ data: response });
 
 }
