@@ -14,6 +14,18 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
     }
 };
 
+export const getSingleImage = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const imageId = req.params.id;
+
+        const image = await db.image.findUnique({ where: { id: imageId } });
+
+        res.status(200).json({ data: image });
+    } catch (error) {
+        res.status(404).json({ error: 'An error occurred while fetching image status.' });
+    }
+}
+
 export const getImageStatus = async (req: Request, res: Response): Promise<void> => {
     try {
         const imageId = req.params.id;
@@ -109,6 +121,6 @@ export const removeImage = async (req: Request, res: Response): Promise<void> =>
 
         res.status(200).json({ status: image });
     } catch (error) {
-        res.status(500).json({ error: 'An error occurred while fetching image status.' });
+        res.status(404).json({ error: 'An error occurred while fetching image status.' });
     }
 }

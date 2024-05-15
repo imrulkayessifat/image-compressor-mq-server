@@ -75,7 +75,7 @@ const retryPendingTasks = async () => {
     }
 };
 
-// setInterval(retryPendingTasks, 10000);
+setInterval(retryPendingTasks, 3000);
 
 server.listen(port, () => {
     console.log(`Server up and running on port: ${port}`);
