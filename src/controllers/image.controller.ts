@@ -78,6 +78,67 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
     }
 }
 
+export const autoCompression = async (req: Request, res: Response): Promise<void> => {
+    try {
+
+        const { store_name } = req.body;
+
+        const allProducts = await db.product.findMany({
+            where: {
+                storename: store_name
+            }
+        })
+
+        allProducts.map(async (product) => {
+            const allImages = await db.image.findMany({
+                where: {
+                    status: 'NOT_COMPRESSED',
+                    productId: product.id
+                }
+            })
+
+            if (allImages.length > 0) {
+                allImages.map(async (image) => {
+
+                    const { id, productId, url } = image;
+                    await db.image.update({
+                        where: { id: image.id },
+                        data: { status: 'ONGOING' },
+                    });
+
+                    amqp.connect('amqp://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+                        if (error0) {
+                            throw error0;
+                        }
+                        connection.createChannel((error1, channel) => {
+                            if (error1) {
+                                throw error1;
+                            }
+
+                            const queue = 'auto_compression';
+                            channel.assertQueue(queue, { durable: false });
+
+                            const data = JSON.stringify({ id, productId, url, store_name });
+                            channel.sendToQueue(queue, Buffer.from(data));
+                            console.log(" [x] Sent %s", id);
+
+                            setTimeout(() => {
+                                connection.close();
+                            }, 500);
+                        });
+                    });
+
+                    res.json({ status: 'Auto Image compression started' });
+                })
+            }
+        })
+
+    } catch (error) {
+        console.error("Error compressing image:", error);
+        res.status(500).json({ error: 'An error occurred while compressing image.' });
+    }
+}
+
 export const uploadImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
