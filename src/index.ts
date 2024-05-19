@@ -18,7 +18,7 @@ const port = process.env.PORT || 3001;
 const db = new PrismaClient();
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '25mb' }));
 app.options('*', cors());
 
 app.use("/store", storeRouter);
@@ -75,7 +75,7 @@ const retryPendingTasks = async () => {
     }
 };
 
-setInterval(retryPendingTasks, 3000);
+// setInterval(retryPendingTasks, 3000);
 
 server.listen(port, () => {
     console.log(`Server up and running on port: ${port}`);

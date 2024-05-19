@@ -78,6 +78,49 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
     }
 }
 
+export const restoreImage = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const compressData = req.body;
+        const { id, productid } = compressData;
+
+        const backupData = await db.backup.findFirst({
+            where:{
+                restoreId:id
+            }
+        })
+
+        const url = backupData.url
+
+        amqp.connect('amqp://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+            if (error0) {
+                throw error0;
+            }
+            connection.createChannel((error1, channel) => {
+                if (error1) {
+                    throw error1;
+                }
+
+                const queue = 'restore_image';
+                channel.assertQueue(queue, { durable: false });
+
+                const data = JSON.stringify({ id, productid, url });
+                channel.sendToQueue(queue, Buffer.from(data));
+                console.log(" [x] Sent %s", id);
+
+                setTimeout(() => {
+                    connection.close();
+                }, 500);
+            });
+        });
+
+        res.json({ status: 'Image compression started' });
+
+    } catch (error) {
+        console.error("Error compressing image:", error);
+        res.status(500).json({ error: 'An error occurred while compressing image.' });
+    }
+}
+
 export const autoCompression = async (req: Request, res: Response): Promise<void> => {
     try {
 
@@ -157,6 +200,41 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 channel.assertQueue(queue, { durable: false });
 
                 const data = JSON.stringify({ id, productid, compressedBuffer });
+                channel.sendToQueue(queue, Buffer.from(data));
+                console.log(" [x] Sent %s", id);
+
+                setTimeout(() => {
+                    connection.close();
+                }, 500);
+            });
+        });
+
+        res.json({ status: 'Image Uploading started' });
+
+    } catch (error) {
+        console.error("Error uploading image:", error);
+        res.status(500).json({ error: 'An error occurred while uploading image.' });
+    }
+}
+
+export const restoreUploadImage = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const compressData = req.body;
+        const { id, productid, url } = compressData;
+
+        amqp.connect('amqp://localhost', (error0, connection) => {
+            if (error0) {
+                throw error0;
+            }
+            connection.createChannel((error1, channel) => {
+                if (error1) {
+                    throw error1;
+                }
+
+                const queue = 'restore_to_uploader';
+                channel.assertQueue(queue, { durable: false });
+
+                const data = JSON.stringify({ id, productid, url });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent %s", id);
 
