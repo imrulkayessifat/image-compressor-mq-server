@@ -11,6 +11,7 @@ import renameRouter from './routes/rename.router';
 import imageRouter from './routes/image.router';
 import backupRouter from './routes/backup.router';
 import uploadcareRouter from './routes/uploadcare.router';
+import jwtRouter from './routes/jwt.router';
 
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/rename", renameRouter);
 app.use("/image", imageRouter)
 app.use("/backup", backupRouter)
 app.use("/uploadcare", uploadcareRouter)
+app.use("/jwt", jwtRouter)
 
 app.get("/", (req, res) => {
     res.json({ message: "demo response" }).status(200);
