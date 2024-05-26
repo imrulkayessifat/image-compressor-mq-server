@@ -13,13 +13,13 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
         recurring_application_charge: {
             name: req.body.plan,
             price: req.body.price,
-            return_url: `${process.env.FRONTEND_DOMAIN}/plans`,
+            return_url: `http://localhost:3001/subscribe/confirmation?shop=${req.body.shop}`,
             test: true
         }
     }
 
     const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
-        method:'POST',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -36,20 +36,21 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': `${accessToken.access_token}`
+            'X-Shopify-Access-Token': `${accessToken.access_token}`,
         },
         body: JSON.stringify(charge)
     })
     const url = await response.json()
+    
     res.status(201).json({ data: url });
 }
 
-export const getSingleChargeData = async (req: Request, res: Response): Promise<void> => {
-    
-    const chargeId = req.body.chargeId
+
+export const confirmation = async (req: Request, res: Response): Promise<void> => {
+    const { shop, charge_id } = req.query;
 
     const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
-        method:'POST',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -62,7 +63,7 @@ export const getSingleChargeData = async (req: Request, res: Response): Promise<
 
     const accessToken = await accessTokenResponse.json() as AccessTokenType;
 
-    const response = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-04/recurring_application_charges/${chargeId}.json`, {
+    const response = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-04/recurring_application_charges/${charge_id}.json`, {
         headers: {
             'X-Shopify-Access-Token': `${accessToken.access_token}`
         },
@@ -70,17 +71,18 @@ export const getSingleChargeData = async (req: Request, res: Response): Promise<
 
     const data = await response.json() as any;
 
-    const charge_id = `${data.recurring_application_charge.id}`;
+    const chargeId = `${data.recurring_application_charge.id}`;
+   
     if (data.recurring_application_charge.status === 'active') {
         await db.store.update({
             where: {
-                name: req.body.storeName
+                name: `${shop}`
             },
             data: {
                 plan: data.recurring_application_charge.name,
-                chargeId: charge_id
+                chargeId: chargeId
             }
         })
     }
-
+    res.send('Subscription activated successfully!');
 }
