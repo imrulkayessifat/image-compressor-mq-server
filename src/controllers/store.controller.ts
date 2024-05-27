@@ -13,7 +13,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
         }
     })
 
-    if (response === null) {
+    if (response === null && req.body.storeName) {
         await db.store.create({
             data: {
                 name: `${req.body.storeName}`
@@ -58,8 +58,10 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
         }
     })
 
+    console.log(response)
+
     if (response.autoCompression === true) {
-        await fetch('http://localhost:3001/image/auto-compression', {
+        fetch('http://localhost:3001/image/auto-compression', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,6 +69,6 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
             body: JSON.stringify({ store_name: req.body.store_name })
         })
     }
-
+    res.status(200).json({ response })
 
 }
