@@ -58,8 +58,6 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
         }
     })
 
-    console.log(response)
-
     if (response.autoCompression === true) {
         fetch('http://localhost:3001/image/auto-compression', {
             method: 'POST',
@@ -71,4 +69,34 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
     }
     res.status(200).json({ response })
 
+}
+
+export const updateStoreCompressType = async (req: Request, res: Response): Promise<void> => {
+
+    const response = await db.store.update({
+        where: {
+            name: req.body.store_name
+        },
+        data: {
+            compressionType: req.body.compressionType
+        }
+    })
+
+    res.status(200).json({ response })
+}
+
+export const updateStoreCustomCompressType = async (req: Request, res: Response): Promise<void> => {
+
+    const response = await db.store.update({
+        where: {
+            name: req.body.store_name
+        },
+        data: {
+            jpeg: req.body.jpeg,
+            png: req.body.png,
+            others: req.body.others
+        }
+    })
+
+    res.status(200).json({ response })
 }
