@@ -71,6 +71,32 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
 
 }
 
+export const updateStoreAutoFileRename = async (req: Request, res: Response): Promise<void> => {
+
+    const response = await db.store.update({
+        where: {
+            name: req.body.store_name
+        },
+        data: {
+            autoFileRename: req.body.auto_file_rename
+        }
+    })
+    res.status(200).json({ response })
+}
+
+export const updateStoreAutoAltRename = async (req: Request, res: Response): Promise<void> => {
+
+    const response = await db.store.update({
+        where: {
+            name: req.body.store_name
+        },
+        data: {
+            autoAltRename: req.body.auto_alt_rename
+        }
+    })
+    res.status(200).json({ response })
+}
+
 export const updateStoreCompressType = async (req: Request, res: Response): Promise<void> => {
 
     const response = await db.store.update({
