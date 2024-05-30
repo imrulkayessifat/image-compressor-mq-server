@@ -62,7 +62,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
 
                 const data = JSON.stringify({ id, productid, url, storeName });
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent %s", id);
+                console.log(" [x] Sent to shopify_to_compressor %s", id);
 
                 setTimeout(() => {
                     connection.close();
@@ -263,7 +263,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
 
                 const data = JSON.stringify({ id, productid, compressedBuffer });
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent %s", id);
+                console.log(" [x] Sent to compressor_to_uploader %s", id);
 
                 setTimeout(() => {
                     connection.close();
