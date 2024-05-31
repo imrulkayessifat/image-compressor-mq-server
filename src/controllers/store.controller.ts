@@ -23,6 +23,19 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             data: {
                 id: '1',
                 title: 'uploadcare',
+                product_title:'uploadcare`',
+                storename: `${req.body.storeName}`
+            }
+        })
+        await db.filerename.create({
+            data: {
+                id: '1',
+                storename: `${req.body.storeName}`
+            }
+        })
+        await db.altrename.create({
+            data: {
+                id: '1',
                 storename: `${req.body.storeName}`
             }
         })
