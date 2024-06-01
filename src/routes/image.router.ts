@@ -7,6 +7,8 @@ import {
     compressImage,
     restoreImage,
     autoCompression,
+    autoFileRename,
+    autoAltRename,
     uploadImage,
     restoreUploadImage,
     removeImage
@@ -20,6 +22,8 @@ imageRouter.get("/image-status/:id", getImageStatus);
 imageRouter.post("/compress-image", compressImage);
 imageRouter.post("/restore-image", restoreImage)
 imageRouter.post("/auto-compression", autoCompression)
+imageRouter.post("/auto-file-rename",autoFileRename)
+imageRouter.post("/auto-alt-rename",autoAltRename)
 imageRouter.post("/upload-image", uploadImage)
 imageRouter.post("/restore-upload", restoreUploadImage)
 imageRouter.delete("/:id", removeImage)

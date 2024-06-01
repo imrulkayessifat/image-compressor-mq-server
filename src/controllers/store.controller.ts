@@ -23,7 +23,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             data: {
                 id: '1',
                 title: 'uploadcare',
-                product_title:'uploadcare',
+                product_title: 'uploadcare',
                 storename: `${req.body.storeName}`
             }
         })
@@ -94,6 +94,17 @@ export const updateStoreAutoFileRename = async (req: Request, res: Response): Pr
             autoFileRename: req.body.auto_file_rename
         }
     })
+
+    if (response.autoFileRename === true) {
+        fetch('http://localhost:3001/image/auto-file-rename', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ store_name: req.body.store_name })
+        })
+    }
+
     res.status(200).json({ response })
 }
 
@@ -107,6 +118,16 @@ export const updateStoreAutoAltRename = async (req: Request, res: Response): Pro
             autoAltRename: req.body.auto_alt_rename
         }
     })
+
+    if (response.autoAltRename === true) {
+        fetch('http://localhost:3001/image/auto-alt-rename', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ store_name: req.body.store_name })
+        })
+    }
     res.status(200).json({ response })
 }
 

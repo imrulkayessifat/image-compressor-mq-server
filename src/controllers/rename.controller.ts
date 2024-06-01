@@ -18,7 +18,6 @@ interface FileRenameProps {
 export const fileRename = async (req: Request, res: Response): Promise<void> => {
 
     const image_id = req.body.id;
-    const image_name = req.body.name;
     const storeName = req.body.storeName;
 
     const store = await db.store.findFirst({
@@ -47,8 +46,12 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         },
     })
 
+    // if (imageReq.fileRename) {
+    //     res.status(409).json({ error: "File Already Renamed" })
+    // }
+
     if (!imageReq) {
-        res.status(404).json({ error: "Product not found" });
+        res.status(404).json({ error: "Image not found" });
     }
 
     const productReq = await db.product.findFirst({
@@ -77,7 +80,8 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             id: image_id
         },
         data: {
-            name: imageRename
+            name: imageRename,
+            fileRename: true
         }
     })
 
@@ -87,7 +91,6 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
 export const altRename = async (req: Request, res: Response): Promise<void> => {
     const image_id = req.body.id;
-    const image_name = req.body.name;
     const storeName = req.body.storeName;
 
     const store = await db.store.findFirst({
@@ -146,7 +149,8 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
             id: image_id
         },
         data: {
-            alt: altrename
+            alt: altrename,
+            altRename:true
         }
     })
 
