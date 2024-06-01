@@ -23,7 +23,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             data: {
                 id: '1',
                 title: 'uploadcare',
-                product_title:'uploadcare`',
+                product_title:'uploadcare',
                 storename: `${req.body.storeName}`
             }
         })
