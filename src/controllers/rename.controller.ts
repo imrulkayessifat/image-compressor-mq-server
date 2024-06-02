@@ -20,7 +20,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
     const image_id = req.body.id;
     const storeName = req.body.storeName;
 
-    console.log("image id : ",image_id)
+    console.log("image id : ", image_id)
 
     const store = await db.store.findFirst({
         where: {
@@ -50,7 +50,14 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         },
     })
 
-    console.log("image req :",imageReq)
+    await db.backupfilename.create({
+        data: {
+            restoreId: `${imageReq.id}`,
+            name: imageReq.name
+        }
+    })
+
+    console.log("image req :", imageReq)
 
     if (!imageReq) {
         res.status(404).json({ error: "Image not found" });
@@ -81,7 +88,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
     const imageRename = `${concatenatedValues}-${image_id}.${imageReq?.name?.split('.').pop()}`
 
-    console.log("image name : ",imageRename)
+    console.log("image name : ", imageRename)
 
     const updateImageName = await db.image.update({
         where: {
@@ -94,6 +101,36 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
     })
 
     res.status(200).json({ data: updateImageName })
+
+}
+
+export const restoreFileName = async (req: Request, res: Response): Promise<void> => {
+
+    const restoreId = req.body.restoreId;
+
+    const restoreImageData = await db.backupfilename.findFirst({
+        where:{
+            restoreId
+        }
+    })
+
+    const updateFileName = await db.image.update({
+        where:{
+            id:restoreId
+        },
+        data:{
+            name:restoreImageData.name,
+            fileRename:false
+        }
+    })
+
+    const data = await db.backupfilename.delete({
+        where:{
+            restoreId
+        }
+    })
+
+    res.status(200).json({ data })
 
 }
 
