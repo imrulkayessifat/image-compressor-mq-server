@@ -83,7 +83,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
         const compressData = req.body;
         const { id, productid } = compressData;
 
-        const backupData = await db.backup.findFirst({
+        const backupData = await db.backupimage.findFirst({
             where: {
                 restoreId: id
             }

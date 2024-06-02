@@ -81,6 +81,8 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
     const imageRename = `${concatenatedValues}-${image_id}.${imageReq?.name?.split('.').pop()}`
 
+    console.log("image name : ",imageRename)
+
     const updateImageName = await db.image.update({
         where: {
             id: image_id
