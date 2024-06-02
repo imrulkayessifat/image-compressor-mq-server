@@ -20,6 +20,8 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
     const image_id = req.body.id;
     const storeName = req.body.storeName;
 
+    console.log("image id : ",image_id)
+
     const store = await db.store.findFirst({
         where: {
             name: storeName
@@ -40,15 +42,15 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         return fileRename[key as keyof FileRenameProps] === true;
     });
 
+    console.log(trueFields)
+
     const imageReq = await db.image.findFirst({
         where: {
             id: image_id
         },
     })
 
-    // if (imageReq.fileRename) {
-    //     res.status(409).json({ error: "File Already Renamed" })
-    // }
+    console.log("image req :",imageReq)
 
     if (!imageReq) {
         res.status(404).json({ error: "Image not found" });
@@ -69,9 +71,13 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         return acc;
     }, {} as Record<string, any>);
 
+    console.log(result)
+
     const concatenatedValues = Object.values(result)
         .filter(value => value !== '')
         .join('-');
+
+    console.log(concatenatedValues)
 
     const imageRename = `${concatenatedValues}-${image_id}.${imageReq?.name?.split('.').pop()}`
 
@@ -150,7 +156,7 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
         },
         data: {
             alt: altrename,
-            altRename:true
+            altRename: true
         }
     })
 
