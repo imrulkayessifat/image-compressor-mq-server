@@ -80,3 +80,29 @@ export const getBatchRestoreImages = async (req: Request, res: Response): Promis
         console.log(e);
     }
 };
+
+export const batchRestoreImages = async (req: Request, res: Response): Promise<void> => {
+    try {
+
+        const store = await db.store.update({
+            where: {
+                name: req.body.store_name
+            },
+            data: {
+                batchRestore: true
+            }
+        })
+
+        const data = await fetch('http://localhost:3001/image/auto-restore', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ store_name: req.body.store_name })
+        })
+
+        res.status(200).json({ success: 'Batch Restore Started...' });
+    } catch (e) {
+        res.status(400).json({ error: `something went wrong` });
+    }
+}
