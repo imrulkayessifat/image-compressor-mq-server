@@ -20,8 +20,6 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
     const image_id = req.body.id;
     const storeName = req.body.storeName;
 
-    console.log("image id : ", image_id)
-
     const store = await db.store.findFirst({
         where: {
             name: storeName
@@ -42,8 +40,6 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         return fileRename[key as keyof FileRenameProps] === true;
     });
 
-    console.log(trueFields)
-
     const imageReq = await db.image.findFirst({
         where: {
             id: image_id
@@ -56,8 +52,6 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             name: imageReq.name
         }
     })
-
-    console.log("image req :", imageReq)
 
     if (!imageReq) {
         res.status(404).json({ error: "Image not found" });
@@ -78,17 +72,11 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         return acc;
     }, {} as Record<string, any>);
 
-    console.log(result)
-
     const concatenatedValues = Object.values(result)
         .filter(value => value !== '')
         .join('-');
 
-    console.log(concatenatedValues)
-
     const imageRename = `${concatenatedValues}-${image_id}.${imageReq?.name?.split('.').pop()}`
-
-    console.log("image name : ", imageRename)
 
     const updateImageName = await db.image.update({
         where: {
@@ -164,6 +152,13 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
         },
     })
 
+    await db.backupaltname.create({
+        data: {
+            restoreId: `${imageReq.id}`,
+            alt: imageReq.alt
+        }
+    })
+
     if (!imageReq) {
         res.status(404).json({ error: "Product not found" });
     }
@@ -200,4 +195,38 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
     })
 
     res.status(200).json({ data: updateImageAltTag })
+}
+
+export const restoreAltTag = async (req: Request, res: Response): Promise<void> => {
+
+    const restoreId = req.body.restoreId;
+
+    const restoreImageData = await db.backupaltname.findFirst({
+        where:{
+            restoreId
+        }
+    })
+
+    console.log(restoreImageData)
+
+    const updateFileName = await db.image.update({
+        where:{
+            id:restoreId
+        },
+        data:{
+            alt:restoreImageData.alt,
+            altRename:false
+        }
+    })
+
+    console.log(updateFileName)
+
+    const data = await db.backupaltname.delete({
+        where:{
+            restoreId
+        }
+    })
+
+    res.status(200).json({ data })
+
 }
