@@ -349,7 +349,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
 export const uploadImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { id, productid, compressedBuffer } = compressData;
+        const { id, productid, compressedBuffer, storeName } = compressData;
 
         amqp.connect('amqp://localhost', (error0, connection) => {
             if (error0) {
@@ -363,7 +363,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 const queue = 'compressor_to_uploader';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ id, productid, compressedBuffer });
+                const data = JSON.stringify({ id, productid, compressedBuffer, storeName });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to compressor_to_uploader %s", id);
 
