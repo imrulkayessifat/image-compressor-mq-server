@@ -35,8 +35,6 @@ export const updateAltRenameSetting = async (req: Request, res: Response): Promi
             }
         })
 
-        console.log(altrename)
-
         res.status(200).json({ success: 'file setting successfully updated' });
     } catch (error) {
         res.status(404).json({ error: 'An error occurred while fetching image status.' });

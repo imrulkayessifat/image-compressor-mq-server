@@ -81,7 +81,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
 export const restoreImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { id, productid } = compressData;
+        const { id, productid, store_name } = compressData;
 
         const backupData = await db.backupimage.findFirst({
             where: {
@@ -90,6 +90,15 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
         })
 
         const url = backupData.url
+
+        await db.store.update({
+            where: {
+                name: store_name
+            },
+            data: {
+                autoCompression: false
+            }
+        })
 
         await db.image.update({
             where: { id: id },
@@ -108,7 +117,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
                 const queue = 'restore_image';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ id, productid, url });
+                const data = JSON.stringify({ id, productid, url, store_name });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent %s", id);
 
@@ -118,11 +127,11 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
             });
         });
 
-        res.json({ status: 'Image compression started' });
+        res.json({ status: 'Image Restoring started' });
 
     } catch (error) {
-        console.error("Error compressing image:", error);
-        res.status(500).json({ error: 'An error occurred while compressing image.' });
+        console.error("Error Restoring image:", error);
+        res.status(500).json({ error: 'An error occurred while Restoring image.' });
     }
 }
 
@@ -250,7 +259,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
 export const autoFileRename = async (req: Request, res: Response): Promise<void> => {
     try {
         const { store_name } = req.body;
-        console.log(store_name)
+        console.log("image controller : ", store_name)
         const allProducts = await db.product.findMany({
             where: {
                 storename: store_name

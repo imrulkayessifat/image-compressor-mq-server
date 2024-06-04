@@ -46,12 +46,20 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         },
     })
 
-    await db.backupfilename.create({
-        data: {
-            restoreId: `${imageReq.id}`,
-            name: imageReq.name
+    const isBackupFileNameAvailable = await db.backupfilename.findFirst({
+        where: {
+            restoreId: `${imageReq.id}`
         }
     })
+
+    if (isBackupFileNameAvailable === null) {
+        await db.backupfilename.create({
+            data: {
+                restoreId: `${imageReq.id}`,
+                name: imageReq.name
+            }
+        })
+    }
 
     if (!imageReq) {
         res.status(404).json({ error: "Image not found" });
@@ -97,23 +105,23 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
     const restoreId = req.body.restoreId;
 
     const restoreImageData = await db.backupfilename.findFirst({
-        where:{
+        where: {
             restoreId
         }
     })
 
     const updateFileName = await db.image.update({
-        where:{
-            id:restoreId
+        where: {
+            id: restoreId
         },
-        data:{
-            name:restoreImageData.name,
-            fileRename:false
+        data: {
+            name: restoreImageData.name,
+            fileRename: false
         }
     })
 
     const data = await db.backupfilename.delete({
-        where:{
+        where: {
             restoreId
         }
     })
@@ -152,12 +160,20 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
         },
     })
 
-    await db.backupaltname.create({
-        data: {
-            restoreId: `${imageReq.id}`,
-            alt: imageReq.alt
+    const isBackupAltTagExist = await db.backupaltname.findFirst({
+        where:{
+            restoreId:`${imageReq.id}`
         }
     })
+
+    if(isBackupAltTagExist === null){
+        await db.backupaltname.create({
+            data: {
+                restoreId: `${imageReq.id}`,
+                alt: imageReq.alt
+            }
+        })
+    }
 
     if (!imageReq) {
         res.status(404).json({ error: "Product not found" });
@@ -202,27 +218,24 @@ export const restoreAltTag = async (req: Request, res: Response): Promise<void> 
     const restoreId = req.body.restoreId;
 
     const restoreImageData = await db.backupaltname.findFirst({
-        where:{
+        where: {
             restoreId
         }
     })
 
-    console.log(restoreImageData)
-
     const updateFileName = await db.image.update({
-        where:{
-            id:restoreId
+        where: {
+            id: restoreId
         },
-        data:{
-            alt:restoreImageData.alt,
-            altRename:false
+        data: {
+            alt: restoreImageData.alt,
+            altRename: false
         }
     })
 
-    console.log(updateFileName)
 
     const data = await db.backupaltname.delete({
-        where:{
+        where: {
             restoreId
         }
     })

@@ -47,8 +47,6 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
 
 export const getStoreToken = async (req: Request, res: Response): Promise<void> => {
 
-    console.log(req.body)
-
     const storeData = await db.store.findFirst({
         where: {
             name: req.body.storeName

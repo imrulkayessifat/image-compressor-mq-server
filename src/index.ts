@@ -76,7 +76,6 @@ const retryPendingTasks = async () => {
                 });
             });
 
-            console.log(`Enqueued ${pendingTasks.length} tasks to RabbitMQ.`);
         } else {
             console.log('No pending tasks found.');
         }

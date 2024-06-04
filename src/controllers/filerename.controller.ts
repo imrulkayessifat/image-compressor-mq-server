@@ -35,8 +35,6 @@ export const updateFileRenameSetting = async (req: Request, res: Response): Prom
             }
         })
 
-        console.log(filerename)
-
         res.status(200).json({ success: 'file setting successfully updated' });
     } catch (error) {
         res.status(404).json({ error: 'An error occurred while fetching image status.' });
