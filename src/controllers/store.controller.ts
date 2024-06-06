@@ -6,12 +6,14 @@ const jwt = require('jsonwebtoken');
 const db = new PrismaClient();
 
 export const getSingleStoreData = async (req: Request, res: Response): Promise<void> => {
-    console.log(req.body.storeName)
+    console.log("1",req.body.storeName)
     const response = await db.store.findFirst({
         where: {
             name: req.body.storeName
         }
     })
+
+    console.log("2",response)
 
     if (response === null && req.body.storeName !== undefined) {
         await db.store.create({
