@@ -41,7 +41,7 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
         body: JSON.stringify(charge)
     })
     const url = await response.json()
-    
+
     res.status(201).json({ data: url });
 }
 
@@ -72,7 +72,7 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
     const data = await response.json() as any;
 
     const chargeId = `${data.recurring_application_charge.id}`;
-   
+
     if (data.recurring_application_charge.status === 'active') {
         await db.store.update({
             where: {
@@ -84,5 +84,8 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
             }
         })
     }
-    res.send('Subscription activated successfully!');
+    // console.log("fff",shop)
+    const redirectUrl = `https://${shop}/admin/apps/${process.env.SHOPIFY_CLIENT_ID}`;
+    res.redirect(redirectUrl);
+    // res.send('Subscription activated successfully!');
 }
