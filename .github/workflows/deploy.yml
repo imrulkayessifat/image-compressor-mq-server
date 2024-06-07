@@ -10,20 +10,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        port: ${{ secrets.PORT }}
-        key: ${{ secrets.SSHKEY }}
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
-        SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
-        SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
-        JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
-
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: appleboy/ssh-action@master
         with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSHKEY }}
           script: "cd /var/www/image-compressor-mq-server && ./.scripts/deploy.sh"
