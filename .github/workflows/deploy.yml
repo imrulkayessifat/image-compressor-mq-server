@@ -19,4 +19,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
-          script: "cd /var/www/image-compressor-mq-server && ./.scripts/deploy.sh"
+          script: "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && cd /var/www/image-compressor-mq-server && ./.scripts/deploy.sh"
