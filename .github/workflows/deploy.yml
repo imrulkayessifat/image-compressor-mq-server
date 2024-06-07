@@ -15,7 +15,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST }} 
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
