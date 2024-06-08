@@ -38,7 +38,7 @@ app.use("/altrename", altRename)
 app.use("/batch", batchRouter)
 
 app.get("/", (req, res) => {
-    res.json({ message: "demo response" }).status(200);
+    res.json({ message: "demo response from mq server" }).status(200);
 });
 
 const retryPendingTasks = async () => {
