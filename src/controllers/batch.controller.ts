@@ -42,7 +42,7 @@ export const batchCompressImages = async (req: Request, res: Response): Promise<
             }
         })
 
-        const data = fetch('http://localhost:3001/image/auto-compression', {
+        const data = fetch(`${process.env.MQSERVER}/image/auto-compression`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export const batchRestoreImages = async (req: Request, res: Response): Promise<v
             }
         })
 
-        const data = fetch('http://localhost:3001/image/auto-restore', {
+        const data = fetch(`${process.env.MQSERVER}/image/auto-restore`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

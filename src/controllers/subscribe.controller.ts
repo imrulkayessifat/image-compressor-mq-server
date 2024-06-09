@@ -13,7 +13,7 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
         recurring_application_charge: {
             name: req.body.plan,
             price: req.body.price,
-            return_url: `http://localhost:3001/subscribe/confirmation?shop=${req.body.shop}`,
+            return_url: `${process.env.MQSERVER}/subscribe/confirmation?shop=${req.body.shop}`,
             test: true
         }
     }

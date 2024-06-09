@@ -74,7 +74,7 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
     })
 
     if (response.autoCompression === true) {
-        fetch('http://localhost:3001/image/auto-compression', {
+        fetch(`${process.env.MQSERVER}/image/auto-compression`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export const updateStoreAutoFileRename = async (req: Request, res: Response): Pr
     })
 
     if (response.autoFileRename === true) {
-        fetch('http://localhost:3001/image/auto-file-rename', {
+        fetch(`${process.env.MQSERVER}/image/auto-file-rename`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export const updateStoreAutoAltRename = async (req: Request, res: Response): Pro
     })
 
     if (response.autoAltRename === true) {
-        fetch('http://localhost:3001/image/auto-alt-rename', {
+        fetch(`${process.env.MQSERVER}/image/auto-alt-rename`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
