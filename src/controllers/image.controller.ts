@@ -48,7 +48,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
             data: { status: 'ONGOING' },
         });
 
-        amqp.connect('amqps://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+        amqp.connect('amqp://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
             if (error0) {
                 throw error0;
             }
@@ -105,7 +105,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
             data: { status: 'RESTORING' },
         });
 
-        amqp.connect('amqps://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+        amqp.connect('amqp://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
             if (error0) {
                 throw error0;
             }
@@ -160,7 +160,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                     data: { status: 'ONGOING' },
                 });
 
-                amqp.connect('amqps://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+                amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
                     if (error0) {
                         throw error0;
                     }
@@ -225,7 +225,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
                     data: { status: 'RESTORING' },
                 });
 
-                amqp.connect('amqps://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+                amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
                     if (error0) {
                         throw error0;
                     }
@@ -277,7 +277,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
             for (const image of allImages) {
                 const { id } = image;
 
-                amqp.connect('amqps://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+                amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
                     if (error0) {
                         throw error0;
                     }
@@ -328,7 +328,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
             for (const image of allImages) {
                 const { id } = image;
 
-                amqp.connect('amqps://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
+                amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
                     if (error0) {
                         throw error0;
                     }
@@ -364,7 +364,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
         const compressData = req.body;
         const { id, productid, compressedBuffer, storeName } = compressData;
 
-        amqp.connect('amqps://localhost', (error0, connection) => {
+        amqp.connect('amqp://localhost', (error0, connection) => {
             if (error0) {
                 throw error0;
             }
@@ -399,7 +399,7 @@ export const restoreUploadImage = async (req: Request, res: Response): Promise<v
         const compressData = req.body;
         const { id, productid, url, storeName } = compressData;
 
-        amqp.connect('amqps://localhost', (error0, connection) => {
+        amqp.connect('amqp://localhost', (error0, connection) => {
             if (error0) {
                 throw error0;
             }

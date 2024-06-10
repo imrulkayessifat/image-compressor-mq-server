@@ -48,7 +48,7 @@ const retryPendingTasks = async () => {
         });
 
         if (pendingTasks.length > 0) {
-            amqp.connect('amqps://localhost', (error0, connection) => {
+            amqp.connect('amqp://localhost', (error0, connection) => {
                 if (error0) {
                     throw error0;
                 }
