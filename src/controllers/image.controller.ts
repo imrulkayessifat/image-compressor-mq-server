@@ -379,6 +379,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 channel.assertQueue(queue, { durable: false });
 
                 const data = JSON.stringify({ id, productid, compressedBuffer, storeName });
+                console.log('length',Buffer.byteLength(data, 'utf8'))
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to compressor_to_uploader %s", id);
 
