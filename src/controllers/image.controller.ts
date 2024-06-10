@@ -366,7 +366,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
         const compressData = req.body;
         const { id, productid, compressedBuffer, storeName } = compressData;
 
-        const base64Image = Buffer.from(compressedBuffer).toString('base64');
+        const base64Image = Buffer.from(compressedBuffer as Buffer).toString('base64');
 
         const singleImageData = await db.image.findFirst({
             where: {
