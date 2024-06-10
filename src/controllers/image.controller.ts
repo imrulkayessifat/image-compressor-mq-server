@@ -366,7 +366,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
 
         console.log("upload Image",storeName)
 
-        amqp.connect('amqp://localhost', (error0, connection) => {
+        await amqp.connect('amqp://localhost?frameMax=15728640', (error0, connection) => {
             if (error0) {
                 throw error0;
             }
