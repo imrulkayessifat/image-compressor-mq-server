@@ -15,6 +15,7 @@ import jwtRouter from './routes/jwt.router';
 import fileRename from './routes/filerename.router';
 import altRename from './routes/altename.router';
 import batchRouter from './routes/batch.router';
+import authRouter from './routes/auth.router';
 
 
 const app = express();
@@ -36,6 +37,7 @@ app.use("/jwt", jwtRouter)
 app.use("/filerename", fileRename)
 app.use("/altrename", altRename)
 app.use("/batch", batchRouter)
+app.use("/auth",authRouter)
 
 app.get("/", (req, res) => {
     res.json({ message: "demo response from mq server" }).status(200);
