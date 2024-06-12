@@ -10,13 +10,13 @@ const JWT_SECRET = process.env.JWT_SECRET
 export const signup = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body
-        const userExit =await db.user.findFirst({
+        const userExit = await db.user.findFirst({
             where: {
                 email
             }
         })
         if (userExit) {
-            res.status(409).json({ data: 'user already exists!' });
+            res.status(409).json({ error: 'user already exists!' });
         }
         const user = await db.user.create({
             data: {
@@ -25,7 +25,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
             }
         })
         res.status(201).json({
-            data: 'user is created!'
+            success: 'user is created!'
         })
     } catch (e) {
         console.log(e);
