@@ -48,7 +48,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
         if (!compareSync(password, userExit.password)) {
             res.status(401).json({
-                error: 'email or password is incorrect!'
+                error: 'email or password is incorrect'
             })
         }
         const token = jwt.sign({
