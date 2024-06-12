@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET
 export const signup = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body
-        const userExit = db.user.findFirst({
+        const userExit =await db.user.findFirst({
             where: {
                 email
             }
