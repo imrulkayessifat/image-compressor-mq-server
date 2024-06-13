@@ -57,6 +57,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
         res.status(200).json({
             data: token,
+            user:userExit
         })
     } catch (e) {
         console.log(e);
