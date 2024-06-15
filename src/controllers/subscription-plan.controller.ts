@@ -71,7 +71,7 @@ export const deleteSubscriptionPlan = async (req: Request, res: Response): Promi
     try {
 
         const ids = req.body.ids
-        console.log(ids)
+        console.log(typeof ids[0])
        
         const data = await db.subscriptionPlan.deleteMany({
             where: {
