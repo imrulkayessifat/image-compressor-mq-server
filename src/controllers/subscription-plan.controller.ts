@@ -74,6 +74,7 @@ export const deleteSubscriptionPlan = async (req: Request, res: Response): Promi
 
         const intIds = ids.map((id:string) => parseInt(id, 10));
 
+        console.log(intIds)
         const data = await db.subscriptionPlan.deleteMany({
             where: {
                 id: {
@@ -82,7 +83,6 @@ export const deleteSubscriptionPlan = async (req: Request, res: Response): Promi
             }
         })
 
-        console.log(data)
 
         res.status(200).json({ success: data })
 
