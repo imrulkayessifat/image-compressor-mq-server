@@ -74,16 +74,16 @@ export const deleteSubscriptionPlan = async (req: Request, res: Response): Promi
 
         console.log(ids)
        
-        // const data = await db.subscriptionPlan.deleteMany({
-        //     where: {
-        //         id: {
-        //             in: ids,
-        //         }
-        //     }
-        // })
+        const data = await db.subscriptionPlan.deleteMany({
+            where: {
+                id: {
+                    in: ids,
+                }
+            }
+        })
 
 
-        res.status(200).json({ success: 'data' })
+        res.status(200).json({ success: data })
 
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while creating subscription plan.' });
