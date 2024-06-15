@@ -70,19 +70,18 @@ export const editSubscriptionPlan = async (req: Request, res: Response): Promise
 export const deleteSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
 
-        const ids = req.body.ids
-        console.log(typeof ids[0])
+        const ids = JSON.parse(req.body.ids);
        
-        // const data = await db.subscriptionPlan.deleteMany({
-        //     where: {
-        //         id: {
-        //             in: ids,
-        //         }
-        //     }
-        // })
+        const data = await db.subscriptionPlan.deleteMany({
+            where: {
+                id: {
+                    in: ids,
+                }
+            }
+        })
 
 
-        res.status(200).json({ success: 'data' })
+        res.status(200).json({ success: data })
 
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while creating subscription plan.' });
