@@ -14,6 +14,6 @@ subscriptionPlanRouter.get("/", getAllSubscriptionPlan);
 subscriptionPlanRouter.get("/:id", getSingleSubscriptionPlan);
 subscriptionPlanRouter.post('/', createSubscriptionPlan)
 subscriptionPlanRouter.put('/:id', editSubscriptionPlan)
-subscriptionPlanRouter.delete('/:id', deleteSubscriptionPlan)
+subscriptionPlanRouter.delete('/', deleteSubscriptionPlan)
 
 export default subscriptionPlanRouter;

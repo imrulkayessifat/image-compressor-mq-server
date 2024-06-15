@@ -33,7 +33,7 @@ export const createSubscriptionPlan = async (req: Request, res: Response): Promi
             data: {
                 name,
                 bandwidth,
-                price:parseFloat(price)
+                price: parseFloat(price)
             }
         })
 
@@ -50,13 +50,13 @@ export const editSubscriptionPlan = async (req: Request, res: Response): Promise
         const { name, bandwidth, price } = req.body;
 
         const data = await db.subscriptionPlan.update({
-            where:{
-                id:parseInt(subscriptionPlanId)
+            where: {
+                id: parseInt(subscriptionPlanId)
             },
             data: {
                 name,
                 bandwidth,
-                price:parseFloat(price)
+                price: parseFloat(price)
             }
         })
 
@@ -69,16 +69,16 @@ export const editSubscriptionPlan = async (req: Request, res: Response): Promise
 
 export const deleteSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
-        const subscriptionPlanId = req.params.id
-        
+        console.log(...req.body)
 
-        const data = await db.subscriptionPlan.delete({
-            where:{
-                id:parseInt(subscriptionPlanId)
-            }
-        })
 
-        res.status(200).json({ success: data })
+        // const data = await db.subscriptionPlan.delete({
+        //     where:{
+        //         id:parseInt(subscriptionPlanId)
+        //     }
+        // })
+
+        res.status(200).json({ success: 'data' })
 
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while creating subscription plan.' });
