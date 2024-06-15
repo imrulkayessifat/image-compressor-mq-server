@@ -70,10 +70,14 @@ export const editSubscriptionPlan = async (req: Request, res: Response): Promise
 export const deleteSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
 
+        const ids = req.body.ids
+
+        const intIds = ids.map((id:string) => parseInt(id, 10));
+
         const data = await db.subscriptionPlan.deleteMany({
             where: {
                 id: {
-                    in: req.body.ids,
+                    in: intIds,
                 }
             }
         })
