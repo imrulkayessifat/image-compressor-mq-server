@@ -72,7 +72,7 @@ export const deleteSubscriptionPlan = async (req: Request, res: Response): Promi
 
         const ids = req.body.ids
 
-        const intIds = ids.map((id:string) => parseInt(id, 10));
+        const intIds = ids.map((id:string) => parseInt(id));
 
         console.log(intIds)
         const data = await db.subscriptionPlan.deleteMany({
