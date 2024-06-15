@@ -69,7 +69,7 @@ export const editSubscriptionPlan = async (req: Request, res: Response): Promise
 
 export const deleteSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log(...req.body)
+        console.log(req.body)
 
 
         // const data = await db.subscriptionPlan.delete({
