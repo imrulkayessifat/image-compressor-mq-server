@@ -56,7 +56,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
         }, JWT_SECRET)
 
         res.status(200).json({
-            data: token,
+            accessToken: token,
             user:userExit
         })
     } catch (e) {
