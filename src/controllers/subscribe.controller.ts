@@ -89,3 +89,41 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
     res.redirect(redirectUrl);
     // res.send('Subscription activated successfully!');
 }
+
+export const remove = async (req: Request, res: Response): Promise<void> => {
+    const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'client_id': `${process.env.SHOPIFY_CLIENT_ID}`,
+            'client_secret': `${process.env.SHOPIFY_CLIENT_SECRET}`,
+            'grant_type': 'client_credentials'
+        })
+    })
+
+    const accessToken = await accessTokenResponse.json() as AccessTokenType;
+
+    const response = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-04/recurring_application_charges/${req.body.chargeId}.json`, {
+        method: 'DELETE',
+        headers: {
+            'X-Shopify-Access-Token': `${accessToken.access_token}`
+        },
+    })
+
+    if (!response.ok) {
+        res.status(500).json({ error: 'something went wrong' });
+    }
+
+    const data = await db.store.update({
+        where: {
+            name: req.body.name
+        },
+        data: {
+            plan: 'FREE',
+            chargeId: null
+        }
+    })
+    res.status(200).json({ success: data })
+}
