@@ -26,7 +26,7 @@ const db = new PrismaClient();
 
 app.use(cors());
 app.use(bodyParser.json({ limit: '25mb' }));
-app.options('*', cors());
+app.options(["https://app.photooptima.com","http://localhost:3000"], cors());
 
 app.use("/store", storeRouter);
 app.use("/subscribe", subscribeRouter);
