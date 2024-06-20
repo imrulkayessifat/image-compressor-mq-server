@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
     getAllImages,
+    getImageThroughSSE,
     getSingleImage,
     getImageStatus,
     compressImage,
@@ -18,6 +19,7 @@ import {
 const imageRouter = Router();
 
 imageRouter.get("/", getAllImages);
+imageRouter.get("/sse",getImageThroughSSE);
 imageRouter.get("/:id", getSingleImage)
 imageRouter.get("/image-status/:id", getImageStatus);
 imageRouter.post("/compress-image", compressImage);
