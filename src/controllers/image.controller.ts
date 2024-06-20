@@ -26,6 +26,9 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
         console.log("sse", images)
         res.write(`event: SUCCESS\n`);
         res.write(`data: ${JSON.stringify(images)}\n\n`);
+
+        res.write(`event: END\n`);
+        res.write(`data: [{}]\n\n`);
         res.end()
     } catch (e) {
         console.log(e);
