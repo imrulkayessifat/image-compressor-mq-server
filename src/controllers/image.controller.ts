@@ -19,6 +19,7 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
         res.setHeader("Content-Type", "text/event-stream");
         res.setHeader("Cache-Control", "no-cache");
         res.setHeader("Connection", "keep-alive");
+        res.setHeader("Access-Control-Allow-Origin","*")
         const images = await db.image.findMany();
 
         res.write(`data: ${JSON.stringify(images)}\n\n`);
