@@ -24,16 +24,17 @@ const server = http.createServer(app)
 const port = process.env.PORT || 3001;
 const db = new PrismaClient();
 
+app.use(cors());
+app.use(bodyParser.json({ limit: '25mb' }));
+
 const corsOptions = {
-    origin: 'http://localhost:3000,https://app.photooptima.com',
+    origin: 'http://example.com',
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     optionsSuccessStatus: 204
 };
-app.use(cors(corsOptions));
-app.use(bodyParser.json({ limit: '25mb' }));
 
-// app.options();
+app.options("http:/localhost:3000", cors());
 
 app.use("/store", storeRouter);
 app.use("/subscribe", subscribeRouter);
