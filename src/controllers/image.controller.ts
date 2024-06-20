@@ -24,7 +24,7 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
         const images = await db.image.findMany();
 
         console.log("sse", images)
-
+        res.write(`event: SUCCESS\n`);
         res.write(`data: ${JSON.stringify(images)}\n\n`);
         res.end()
     } catch (e) {
