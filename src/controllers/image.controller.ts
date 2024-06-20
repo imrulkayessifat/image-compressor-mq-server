@@ -6,6 +6,7 @@ const db = new PrismaClient();
 
 export const getAllImages = async (req: Request, res: Response): Promise<void> => {
     try {
+        res.setHeader("Access-Control-Allow-Origin","http://localhost:3000")
         const images = await db.image.findMany();
 
         res.status(200).json({ data: images });
@@ -19,7 +20,7 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
         res.setHeader("Content-Type", "text/event-stream");
         res.setHeader("Cache-Control", "no-cache");
         res.setHeader("Connection", "keep-alive");
-        res.setHeader("Access-Control-Allow-Origin","*")
+        res.setHeader("Access-Control-Allow-Origin","http://localhost:3000")
         const images = await db.image.findMany();
 
         res.write(`data: ${JSON.stringify(images)}\n\n`);
