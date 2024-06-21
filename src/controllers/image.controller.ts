@@ -37,9 +37,9 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
 
 export const getSingleImage = async (req: Request, res: Response): Promise<void> => {
     try {
-        const imageId = req.params.id;
+        const uid = req.params.uid;
 
-        const image = await db.image.findUnique({ where: { id: imageId } });
+        const image = await db.image.findUnique({ where: { uid: parseInt(uid) } });
 
         res.status(200).json({ data: image });
     } catch (error) {
@@ -49,9 +49,9 @@ export const getSingleImage = async (req: Request, res: Response): Promise<void>
 
 export const getImageStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-        const imageId = req.params.id;
+        const uid = req.params.uid;
 
-        const image = await db.image.findUnique({ where: { id: imageId } });
+        const image = await db.image.findUnique({ where: { uid: parseInt(uid) } });
 
         res.status(200).json({ status: image!.status });
     } catch (error) {
@@ -62,10 +62,10 @@ export const getImageStatus = async (req: Request, res: Response): Promise<void>
 export const compressImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { id, productid, url, storeName } = compressData;
+        const { uid, productid, url, storeName } = compressData;
         console.log(storeName)
         await db.image.update({
-            where: { id: id },
+            where: { uid: parseInt(uid) },
             data: { status: 'ONGOING' },
         });
 
@@ -81,9 +81,9 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
                 const queue = 'shopify_to_compressor';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ id, productid, url, storeName });
+                const data = JSON.stringify({ uid, productid, url, storeName });
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent to shopify_to_compressor %s", id);
+                console.log(" [x] Sent to shopify_to_compressor %s", uid);
 
                 setTimeout(() => {
                     connection.close();
@@ -102,11 +102,11 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
 export const restoreImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { id, productid, store_name } = compressData;
+        const { uid, productid, store_name } = compressData;
 
         const backupData = await db.backupimage.findFirst({
             where: {
-                restoreId: id
+                restoreId: uid
             }
         })
 
@@ -122,7 +122,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
         })
 
         await db.image.update({
-            where: { id: id },
+            where: { uid: parseInt(uid) },
             data: { status: 'RESTORING' },
         });
 
@@ -138,9 +138,9 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
                 const queue = 'restore_image';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ id, productid, url, store_name });
+                const data = JSON.stringify({ uid, productid, url, store_name });
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent %s", id);
+                console.log(" [x] Sent %s", uid);
 
                 setTimeout(() => {
                     connection.close();
@@ -175,9 +175,9 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
             })
 
             for (const image of allImages) {
-                const { id, productId, url } = image;
+                const { uid, productId, url } = image;
                 await db.image.update({
-                    where: { id: image.id },
+                    where: { uid: uid },
                     data: { status: 'ONGOING' },
                 });
 
@@ -193,9 +193,9 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                         const queue = 'auto_compression';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ id, productId, url, store_name });
+                        const data = JSON.stringify({ uid, productId, url, store_name });
                         channel.sendToQueue(queue, Buffer.from(data));
-                        console.log(" [x] Sent %s", id);
+                        console.log(" [x] Sent %s", uid);
 
                         setTimeout(() => {
                             connection.close();
@@ -231,18 +231,18 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
             })
 
             for (const image of allImages) {
-                const { id, productId } = image;
+                const { uid, productId } = image;
 
                 const backupData = await db.backupimage.findFirst({
                     where: {
-                        restoreId: id
+                        restoreId: uid.toString()
                     }
                 })
 
                 const url = backupData.url
 
                 await db.image.update({
-                    where: { id: image.id },
+                    where: { uid: uid },
                     data: { status: 'RESTORING' },
                 });
 
@@ -258,9 +258,9 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
                         const queue = 'auto_restore';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ id, productId, url, store_name });
+                        const data = JSON.stringify({ uid, productId, url, store_name });
                         channel.sendToQueue(queue, Buffer.from(data));
-                        console.log(" [x] Restore Sent %s", id);
+                        console.log(" [x] Restore Sent %s", uid);
 
                         setTimeout(() => {
                             connection.close();
@@ -455,9 +455,9 @@ export const restoreUploadImage = async (req: Request, res: Response): Promise<v
 
 export const removeImage = async (req: Request, res: Response): Promise<void> => {
     try {
-        const imageId = req.params.id;
+        const uid = req.params.uid;
 
-        const image = await db.image.delete({ where: { id: imageId } });
+        const image = await db.image.delete({ where: { uid: parseInt(uid) } });
 
         res.status(200).json({ status: image });
     } catch (error) {

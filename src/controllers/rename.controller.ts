@@ -17,7 +17,7 @@ interface FileRenameProps {
 
 export const fileRename = async (req: Request, res: Response): Promise<void> => {
 
-    const image_id = req.body.id;
+    const uid = req.body.uid;
     const storeName = req.body.storeName;
 
     const store = await db.store.findFirst({
@@ -42,7 +42,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
     const imageReq = await db.image.findFirst({
         where: {
-            id: image_id
+            uid: parseInt(uid)
         },
     })
 
@@ -84,11 +84,11 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         .filter(value => value !== '')
         .join('-');
 
-    const imageRename = `${concatenatedValues}-${image_id}.${imageReq?.name?.split('.').pop()}`
+    const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
 
     const updateImageName = await db.image.update({
         where: {
-            id: image_id
+            uid: parseInt(uid)
         },
         data: {
             name: imageRename,
@@ -112,7 +112,7 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
 
     const updateFileName = await db.image.update({
         where: {
-            id: restoreId
+            uid: restoreId
         },
         data: {
             name: restoreImageData.name,
@@ -131,7 +131,7 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
 }
 
 export const altRename = async (req: Request, res: Response): Promise<void> => {
-    const image_id = req.body.id;
+    const uid = req.body.uid;
     const storeName = req.body.storeName;
 
     const store = await db.store.findFirst({
@@ -156,7 +156,7 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
     const imageReq = await db.image.findFirst({
         where: {
-            id: image_id
+            uid: parseInt(uid)
         },
     })
 
@@ -198,11 +198,11 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
         .filter(value => value !== '')
         .join('-');
 
-    const altrename = `${concatenatedValues}-${image_id}.${imageReq?.name?.split('.').pop()}`
+    const altrename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
 
     const updateImageAltTag = await db.image.update({
         where: {
-            id: image_id
+            uid: parseInt(uid)
         },
         data: {
             alt: altrename,
@@ -225,7 +225,7 @@ export const restoreAltTag = async (req: Request, res: Response): Promise<void> 
 
     const updateFileName = await db.image.update({
         where: {
-            id: restoreId
+            uid: parseInt(restoreId)
         },
         data: {
             alt: restoreImageData.alt,
