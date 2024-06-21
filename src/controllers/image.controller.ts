@@ -106,7 +106,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
 
         const backupData = await db.backupimage.findFirst({
             where: {
-                restoreId: uid
+                restoreId: `${uid}`
             }
         })
 
