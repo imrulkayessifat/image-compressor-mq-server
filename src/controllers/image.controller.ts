@@ -383,7 +383,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
 export const uploadImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { id, productid, compressedBuffer, storeName } = compressData;
+        const { uid, productid, compressedBuffer, storeName } = compressData;
 
         console.log("upload Image", storeName)
 
@@ -399,10 +399,10 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 const queue = 'compressor_to_uploader';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ id, productid, compressedBuffer, storeName });
+                const data = JSON.stringify({ uid, productid, compressedBuffer, storeName });
                 console.log('length', Buffer.byteLength(data, 'utf8'))
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent to compressor_to_uploader %s", id);
+                console.log(" [x] Sent to compressor_to_uploader %s", uid);
 
                 setTimeout(() => {
                     connection.close();
