@@ -48,14 +48,14 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
     const isBackupFileNameAvailable = await db.backupfilename.findFirst({
         where: {
-            restoreId: `${imageReq.id}`
+            restoreId: `${imageReq.uid}`
         }
     })
 
     if (isBackupFileNameAvailable === null) {
         await db.backupfilename.create({
             data: {
-                restoreId: `${imageReq.id}`,
+                restoreId: `${imageReq.uid}`,
                 name: imageReq.name
             }
         })
