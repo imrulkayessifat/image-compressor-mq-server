@@ -84,7 +84,7 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
             }
         })
     }
-    // console.log("fff",shop)
+   
     const redirectUrl = `https://${shop}/admin/apps/${process.env.SHOPIFY_CLIENT_ID}`;
     res.redirect(redirectUrl);
     // res.send('Subscription activated successfully!');

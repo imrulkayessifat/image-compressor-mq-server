@@ -23,7 +23,7 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
         res.setHeader("Access-Control-Allow-Credentials", "true")
         const images = await db.image.findMany();
 
-        console.log("sse", images)
+        
         res.write(`event: SUCCESS\n`);
         res.write(`data: ${JSON.stringify(images)}\n\n`);
 
@@ -63,7 +63,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
     try {
         const compressData = req.body;
         const { uid, productid, url, storeName } = compressData;
-        console.log(storeName)
+        
         await db.image.update({
             where: { uid: parseInt(uid) },
             data: { status: 'ONGOING' },
@@ -280,7 +280,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
 export const autoFileRename = async (req: Request, res: Response): Promise<void> => {
     try {
         const { store_name } = req.body;
-        console.log("image controller : ", store_name)
+        
         const allProducts = await db.product.findMany({
             where: {
                 storename: store_name
@@ -385,7 +385,6 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
         const compressData = req.body;
         const { uid, productid, compressedBuffer, storeName } = compressData;
 
-        console.log("upload Image", storeName)
 
         amqp.connect('amqp://localhost', (error0, connection) => {
             if (error0) {
@@ -400,7 +399,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 channel.assertQueue(queue, { durable: false });
 
                 const data = JSON.stringify({ uid, productid, compressedBuffer, storeName });
-                console.log('length', Buffer.byteLength(data, 'utf8'))
+             
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to compressor_to_uploader %s", uid);
 
