@@ -162,14 +162,14 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
     const isBackupAltTagExist = await db.backupaltname.findFirst({
         where:{
-            restoreId:`${imageReq.id}`
+            restoreId:`${imageReq.uid}`
         }
     })
 
     if(isBackupAltTagExist === null){
         await db.backupaltname.create({
             data: {
-                restoreId: `${imageReq.id}`,
+                restoreId: `${imageReq.uid}`,
                 alt: imageReq.alt
             }
         })
