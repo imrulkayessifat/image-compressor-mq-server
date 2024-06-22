@@ -112,7 +112,7 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
 
     const updateFileName = await db.image.update({
         where: {
-            uid: restoreId
+            uid: parseInt(restoreId)
         },
         data: {
             name: restoreImageData.name,
