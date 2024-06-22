@@ -347,7 +347,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
             })
 
             for (const image of allImages) {
-                const { id } = image;
+                const { uid } = image;
 
                 amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
                     if (error0) {
@@ -361,9 +361,9 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
                         const queue = 'auto_alt_rename';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ id, store_name });
+                        const data = JSON.stringify({ uid, store_name });
                         channel.sendToQueue(queue, Buffer.from(data));
-                        console.log(" [x] Auto Alt Rename Sent %s", id);
+                        console.log(" [x] Auto Alt Rename Sent %s", uid);
 
                         setTimeout(() => {
                             connection.close();
