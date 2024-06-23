@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { io } from "../index";
 
 const db = new PrismaClient();
 
@@ -95,6 +96,10 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             fileRename: true
         }
     })
+
+    io.emit('image_model',()=>{
+        console.log('an event occured in auto compression');
+    });
 
     res.status(200).json({ data: updateImageName })
 
@@ -209,6 +214,10 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
             altRename: true
         }
     })
+
+    io.emit('image_model',()=>{
+        console.log('an event occured in auto compression');
+    });
 
     res.status(200).json({ data: updateImageAltTag })
 }
