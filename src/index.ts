@@ -4,6 +4,8 @@ import express from 'express';
 import bodyParser from 'body-parser'
 import amqp from 'amqplib/callback_api';
 import { PrismaClient } from "@prisma/client";
+import { Server } from 'socket.io';
+import { Socket } from 'socket.io';
 
 import subscribeRouter from './routes/subscribe.router';
 import storeRouter from './routes/store.router';
@@ -23,6 +25,7 @@ const app = express();
 const server = http.createServer(app)
 const port = process.env.PORT || 3001;
 const db = new PrismaClient();
+export const io = new Server(server)
 
 app.use(cors());
 app.use(bodyParser.json({ limit: '25mb' }));
@@ -52,6 +55,13 @@ app.use("/subscription-plan", subscriptionPlanRouter)
 app.get("/", (req, res) => {
     res.json({ message: "demo response from mq server" }).status(200);
 });
+
+io.on('connection', (socket) => {
+    console.log('new client connected  from mq server')
+    socket.on('disconnect', () => {
+        console.log('client disconnected  from mq server')
+    })
+})
 
 const retryPendingTasks = async () => {
     try {

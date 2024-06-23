@@ -33,6 +33,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "raw-body": "^2.5.2",
-    "sharp": "^0.33.3"
+    "sharp": "^0.33.3",
+    "socket.io": "^4.7.5"
   }
 }
