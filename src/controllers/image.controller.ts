@@ -48,6 +48,18 @@ export const getSingleImage = async (req: Request, res: Response): Promise<void>
     }
 }
 
+export const getSingleImageManual = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const uuid = req.params.uuid;
+
+        const image = await db.image.findFirst({ where: { id: uuid } });
+
+        res.status(200).json({ data: image });
+    } catch (error) {
+        res.status(404).json({ error: 'An error occurred while fetching image status.' });
+    }
+}
+
 export const getImageStatus = async (req: Request, res: Response): Promise<void> => {
     try {
         const uid = req.params.uid;

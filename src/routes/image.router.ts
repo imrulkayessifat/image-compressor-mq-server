@@ -4,6 +4,7 @@ import {
     getAllImages,
     getImageThroughSSE,
     getSingleImage,
+    getSingleImageManual,
     getImageStatus,
     compressImage,
     restoreImage,
@@ -21,6 +22,7 @@ const imageRouter = Router();
 imageRouter.get("/", getAllImages);
 imageRouter.get("/sse",getImageThroughSSE);
 imageRouter.get("/:id", getSingleImage)
+imageRouter.get("/manual/:uuid", getSingleImageManual)
 imageRouter.get("/image-status/:id", getImageStatus);
 imageRouter.post("/compress-image", compressImage);
 imageRouter.post("/restore-image", restoreImage)
