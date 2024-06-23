@@ -1,6 +1,7 @@
 import amqp from 'amqplib/callback_api';
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { io } from '../index';
 
 const db = new PrismaClient();
 
@@ -180,6 +181,8 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                     where: { uid: uid },
                     data: { status: 'ONGOING' },
                 });
+
+                io.emit('image_model')
 
                 amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
                     if (error0) {
