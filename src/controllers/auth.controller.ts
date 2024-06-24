@@ -35,7 +35,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 export const signin = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body
-
+        console.log(req.body)
         const userExit = await db.user.findFirst({
             where: {
                 email
