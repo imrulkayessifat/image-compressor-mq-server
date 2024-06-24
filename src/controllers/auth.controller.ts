@@ -34,33 +34,34 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
 export const signin = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password } = req.body
-        console.log(req.body)
+        const { email, password } = req.body;
+        console.log(req.body);
+
         const userExit = await db.user.findFirst({
             where: {
                 email
             }
-        })
-        console.log(userExit,!userExit)
+        });
+        console.log(userExit, !userExit);
 
         if (!userExit) {
-            res.status(404).json({ error: 'user does not exists!' });
+            res.status(404).json({ error: 'user does not exist!' });
+            return 
         }
 
         if (!compareSync(password, userExit.password)) {
-            res.status(401).json({
-                error: 'email or password is incorrect'
-            })
+            res.status(401).json({ error: 'email or password is incorrect' });
+            return 
         }
-        const token = jwt.sign({
-            user: userExit
-        }, JWT_SECRET)
+
+        const token = jwt.sign({ user: userExit }, JWT_SECRET);
 
         res.status(200).json({
             accessToken: token,
-            user:userExit
-        })
+            user: userExit
+        });
     } catch (e) {
         console.log(e);
+        res.status(500).json({ error: 'Internal server error' }); // Add a response for any unexpected errors
     }
 };
