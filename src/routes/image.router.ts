@@ -19,7 +19,7 @@ import {
 
 const imageRouter = Router();
 
-imageRouter.get("/", getAllImages);
+imageRouter.get("/:storeName", getAllImages);
 imageRouter.get("/sse",getImageThroughSSE);
 imageRouter.get("/:id", getSingleImage)
 imageRouter.get("/manual/:uuid", getSingleImageManual)

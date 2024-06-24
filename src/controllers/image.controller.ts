@@ -1,14 +1,33 @@
 import amqp from 'amqplib/callback_api';
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { Image } from '@prisma/client';
 import { io } from '../index';
 
 const db = new PrismaClient();
 
 export const getAllImages = async (req: Request, res: Response): Promise<void> => {
     try {
-        const images = await db.image.findMany();
+        const storeName = req.params.storeName;
+        const allProducts = await db.product.findMany({
+            where: {
+                storename: storeName
+            }
+        })
+        let images:Image[] = []
 
+        for (const product of allProducts) {
+            const allImages = await db.image.findMany({
+                where: {
+                    productId: product.id
+                }
+            })
+
+            for (const image of allImages) {
+                images.push(image)
+            }
+        }
+        console.log("images : ",images)
         res.status(200).json({ data: images });
     } catch (e) {
         console.log(e);
