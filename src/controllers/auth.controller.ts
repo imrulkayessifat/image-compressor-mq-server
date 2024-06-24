@@ -41,6 +41,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
                 email
             }
         })
+        console.log(userExit,!userExit)
 
         if (!userExit) {
             res.status(404).json({ error: 'user does not exists!' });
