@@ -6,14 +6,6 @@ const db = new PrismaClient();
 
 export const getAllSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
-        const token = req.header('Authorization')
-
-        if (!token) {
-            res.status(401).json({ error: 'No token,authorization denied!' })
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-
         const subscriptionPlan = await db.subscriptionPlan.findMany();
 
         res.status(200).json({ data: subscriptionPlan });
