@@ -77,7 +77,7 @@ export const getBatchRestoreImages = async (req: Request, res: Response): Promis
         }
         res.status(200).json({ batch_restore_images_length: length });
     } catch (e) {
-        console.log(e);
+        res.status(400).json({ error: 'something went wrong!' })
     }
 };
 

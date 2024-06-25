@@ -26,6 +26,6 @@ export const getFileInfo = async (req: Request, res: Response): Promise<void> =>
 
         res.status(200).json({ data: result });
     } catch (e) {
-        console.log(e);
+        res.status(400).json({ error: 'something went wrong!' })
     }
 };

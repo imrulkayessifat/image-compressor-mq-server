@@ -18,7 +18,7 @@ export const getAllSubscriptionPlan = async (req: Request, res: Response): Promi
 
         res.status(200).json({ data: subscriptionPlan });
     } catch (e) {
-        console.log(e);
+        res.status(400).json({ error: 'something went wrong!' })
     }
 };
 

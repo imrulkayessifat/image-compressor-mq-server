@@ -27,10 +27,9 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
                 images.push(image)
             }
         }
-        console.log("images : ",images)
         res.status(200).json({ data: images });
     } catch (e) {
-        console.log(e);
+        res.status(400).json({ error: 'something went wrong!' })
     }
 };
 
@@ -51,7 +50,7 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
         res.write(`data: ${JSON.stringify(images)}\n\n`);
         res.end()
     } catch (e) {
-        console.log(e);
+        res.status(400).json({ error: 'something went wrong!' })
     }
 };
 

@@ -44,7 +44,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
 
         res.status(200).json({ data: response });
     } catch (e) {
-        console.log(e);
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 
@@ -62,7 +62,7 @@ export const getAllStoreData = async (req: Request, res: Response): Promise<void
         const response = await db.store.findMany();
         res.status(200).json({ data: response })
     } catch (e) {
-        console.log(e)
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 }
@@ -79,7 +79,7 @@ export const getStoreToken = async (req: Request, res: Response): Promise<void> 
 
         res.status(200).json({ token })
     } catch (e) {
-        console.log(e)
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 }
@@ -107,7 +107,7 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
         }
         res.status(200).json({ response })
     } catch (e) {
-        console.log(e)
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 }
@@ -135,7 +135,7 @@ export const updateStoreAutoFileRename = async (req: Request, res: Response): Pr
 
         res.status(200).json({ response })
     } catch (e) {
-        console.log(e)
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 }
@@ -162,7 +162,7 @@ export const updateStoreAutoAltRename = async (req: Request, res: Response): Pro
         }
         res.status(200).json({ response })
     } catch (e) {
-        console.log(e)
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 }
@@ -180,7 +180,7 @@ export const updateStoreCompressType = async (req: Request, res: Response): Prom
 
         res.status(200).json({ response })
     } catch (e) {
-        console.log(e)
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 }
@@ -200,7 +200,7 @@ export const updateStoreCustomCompressType = async (req: Request, res: Response)
 
         res.status(200).json({ response })
     } catch (e) {
-        console.log(e)
+        res.status(400).json({ error: 'something went wrong!' })
     }
 
 }
