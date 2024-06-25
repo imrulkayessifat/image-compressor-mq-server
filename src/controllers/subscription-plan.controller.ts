@@ -61,6 +61,8 @@ export const createSubscriptionPlan = async (req: Request, res: Response): Promi
             }
         })
 
+        console.log("subscription create ",data)
+
         res.status(201).json({ success: data })
 
     } catch (error) {
