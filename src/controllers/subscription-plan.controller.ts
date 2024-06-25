@@ -14,7 +14,6 @@ export const getAllSubscriptionPlan = async (req: Request, res: Response): Promi
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-        console.log("jwt verification : ",decoded)
         const subscriptionPlan = await db.subscriptionPlan.findMany();
 
         res.status(200).json({ data: subscriptionPlan });
@@ -25,6 +24,14 @@ export const getAllSubscriptionPlan = async (req: Request, res: Response): Promi
 
 export const getSingleSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
+        const token = req.header('Authorization')
+
+        if (!token) {
+            res.status(401).json({ error: 'No token,authorization denied!' })
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
         const subscriptionPlanId = req.params.id;
 
         const subscriptionPlan = await db.subscriptionPlan.findUnique({ where: { id: parseInt(subscriptionPlanId) } });
@@ -37,6 +44,13 @@ export const getSingleSubscriptionPlan = async (req: Request, res: Response): Pr
 
 export const createSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
+        const token = req.header('Authorization')
+
+        if (!token) {
+            res.status(401).json({ error: 'No token,authorization denied!' })
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const { name, bandwidth, price } = req.body;
 
         const data = await db.subscriptionPlan.create({
@@ -56,6 +70,13 @@ export const createSubscriptionPlan = async (req: Request, res: Response): Promi
 
 export const editSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
+        const token = req.header('Authorization')
+
+        if (!token) {
+            res.status(401).json({ error: 'No token,authorization denied!' })
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const subscriptionPlanId = req.params.id
         const { name, bandwidth, price } = req.body;
 
@@ -79,7 +100,13 @@ export const editSubscriptionPlan = async (req: Request, res: Response): Promise
 
 export const deleteSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
+        const token = req.header('Authorization')
 
+        if (!token) {
+            res.status(401).json({ error: 'No token,authorization denied!' })
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const ids = req.body.ids;
 
         console.log(ids)
