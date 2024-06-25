@@ -86,7 +86,7 @@ model User {
 model SubscriptionPlan {
   id        Int    @id @default(autoincrement())
   name      String
-  bandwidth String
+  bandwidth Int
   price     Float
 }
 
