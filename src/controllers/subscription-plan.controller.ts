@@ -56,12 +56,10 @@ export const createSubscriptionPlan = async (req: Request, res: Response): Promi
         const data = await db.subscriptionPlan.create({
             data: {
                 name,
-                bandwidth,
+                bandwidth: parseInt(bandwidth),
                 price: parseFloat(price)
             }
         })
-
-        console.log("subscription create ",data)
 
         res.status(201).json({ success: data })
 
@@ -88,7 +86,7 @@ export const editSubscriptionPlan = async (req: Request, res: Response): Promise
             },
             data: {
                 name,
-                bandwidth,
+                bandwidth: parseInt(bandwidth),
                 price: parseFloat(price)
             }
         })
