@@ -1,10 +1,20 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import * as jwt from 'jsonwebtoken'
 
 const db = new PrismaClient();
 
 export const getAllSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
+        const token = req.header('Authorization')
+
+        if (!token) {
+            res.status(401).json({ error: 'No token,authorization denied!' })
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+        console.log("jwt verification : ",decoded)
         const subscriptionPlan = await db.subscriptionPlan.findMany();
 
         res.status(200).json({ data: subscriptionPlan });
@@ -73,7 +83,7 @@ export const deleteSubscriptionPlan = async (req: Request, res: Response): Promi
         const ids = req.body.ids;
 
         console.log(ids)
-       
+
         const data = await db.subscriptionPlan.deleteMany({
             where: {
                 id: {
