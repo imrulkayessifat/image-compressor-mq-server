@@ -27,7 +27,10 @@ const port = process.env.PORT || 3001;
 const db = new PrismaClient();
 export const io = new Server(server,{
     cors:{
-        origin:'*'
+        origin: 'https://app.photooptima.com',
+        allowedHeaders: ["Access-Control-Allow-Origin","Access-Control-Allow-Methods","Access-Control-Allow-Headers"],
+        methods: ["GET"],
+        credentials: true
     }
 })
 
