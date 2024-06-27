@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { Request, Response, NextFunction } from "express";
 
 import {
     getAllImages,
@@ -17,37 +16,11 @@ import {
     restoreUploadImage,
     removeImage
 } from "../controllers/image.controller";
+import { verifyRequest } from "middleware/shopify-auth";
 
 const imageRouter = Router();
 
-const verifyRequest = async (req: Request, res: Response, next: NextFunction) => {
-    const shopifyAccessToken = req.header('Authorization')
-    const shop = req.header('shop')
 
-    if (!shop || !shopifyAccessToken) {
-        return res.status(401).send('Unauthorized');
-    }
-
-    console.log("shopify access token middleware :", shop, shopifyAccessToken)
-
-    try {
-        const response = await fetch(`https://${shop}/admin/api/2024-04/shop.json`, {
-            headers: {
-                'X-Shopify-Access-Token': shopifyAccessToken
-            }
-        });
-        if (response.status === 200) {
-            return next();
-        } else {
-            const errorDetails = await response.text();
-            console.log("error details : ", errorDetails)
-            return res.status(401).send('Unauthorized');
-        }
-    } catch (error) {
-        console.log("ppppp")
-        return res.status(401).send('Unauthorized');
-    }
-}
 
 imageRouter.get("/:storeName",verifyRequest, getAllImages);
 imageRouter.get("/sse", getImageThroughSSE);
