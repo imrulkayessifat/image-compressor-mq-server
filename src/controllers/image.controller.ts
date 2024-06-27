@@ -8,13 +8,31 @@ const db = new PrismaClient();
 
 export const getAllImages = async (req: Request, res: Response): Promise<void> => {
     try {
+        const shopifyAccessToken = req.header('Authorization')
+
+        if (!shopifyAccessToken) {
+            res.status(401).json({ error: 'No token,authorization denied!' })
+        }
+        const store_data = await fetch(`https://${req.params.storeName}/admin/api/2024-04/shop.json`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': shopifyAccessToken
+            }
+        })
+
+        if (!store_data.ok) {
+            const errorDetails = await store_data.text();
+            res.status(401).json({ error: `${errorDetails}` })
+        }
+        
         const storeName = req.params.storeName;
         const allProducts = await db.product.findMany({
             where: {
                 storename: storeName
             }
         })
-        let images:Image[] = []
+        let images: Image[] = []
 
         for (const product of allProducts) {
             const allImages = await db.image.findMany({
@@ -42,7 +60,7 @@ export const getImageThroughSSE = async (req: Request, res: Response): Promise<v
         res.setHeader("Access-Control-Allow-Credentials", "true")
         const images = await db.image.findMany();
 
-        
+
         res.write(`event: SUCCESS\n`);
         res.write(`data: ${JSON.stringify(images)}\n\n`);
 
@@ -94,7 +112,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
     try {
         const compressData = req.body;
         const { uid, productid, url, storeName } = compressData;
-        
+
         await db.image.update({
             where: { uid: parseInt(uid) },
             data: { status: 'ONGOING' },
@@ -212,7 +230,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                     data: { status: 'ONGOING' },
                 });
 
-                io.emit('image_model',()=>{
+                io.emit('image_model', () => {
                     console.log('an event occured in auto compression');
                 });
 
@@ -281,7 +299,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
                     data: { status: 'RESTORING' },
                 });
 
-                io.emit('image_model',()=>{
+                io.emit('image_model', () => {
                     console.log('an event occured in auto restore');
                 });
 
@@ -319,7 +337,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
 export const autoFileRename = async (req: Request, res: Response): Promise<void> => {
     try {
         const { store_name } = req.body;
-        
+
         const allProducts = await db.product.findMany({
             where: {
                 storename: store_name
@@ -438,7 +456,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 channel.assertQueue(queue, { durable: false });
 
                 const data = JSON.stringify({ uid, productid, compressedBuffer, storeName });
-             
+
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to compressor_to_uploader %s", uid);
 
