@@ -51,8 +51,6 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
 
         const { products } = await productsReq.json();
 
-        console.log("products : ",products)
-
         for (const product of products) {
 
             const { id, images } = product
