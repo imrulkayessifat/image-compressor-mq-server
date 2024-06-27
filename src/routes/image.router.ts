@@ -27,8 +27,8 @@ imageRouter.get("/sse", getImageThroughSSE);
 imageRouter.get("/:id", getSingleImage)
 imageRouter.get("/manual/:uuid", getSingleImageManual)
 imageRouter.get("/image-status/:id", getImageStatus);
-imageRouter.post("/compress-image", compressImage);
-imageRouter.post("/restore-image", restoreImage)
+imageRouter.post("/compress-image",verifyRequest, compressImage);
+imageRouter.post("/restore-image",verifyRequest, restoreImage)
 imageRouter.post("/auto-compression", autoCompression)
 imageRouter.post("/auto-restore", autoRestore)
 imageRouter.post("/auto-file-rename", autoFileRename)
