@@ -44,6 +44,7 @@ const verifyRequest = async (req: Request, res: Response, next: NextFunction) =>
             return res.status(401).send('Unauthorized');
         }
     } catch (error) {
+        console.log("ppppp")
         return res.status(401).send('Unauthorized');
     }
 }
