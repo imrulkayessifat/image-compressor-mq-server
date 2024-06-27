@@ -28,7 +28,7 @@ const verifyRequest = async (req: Request, res: Response, next: NextFunction) =>
         return res.status(401).send('Unauthorized');
     }
 
-    console.log("shopify access token middleware :",shop,shopifyAccessToken)
+    console.log("shopify access token middleware :", shop, shopifyAccessToken)
 
     try {
         const response = await fetch(`https://${shop}/admin/api/2024-04/shop.json`, {
@@ -39,6 +39,8 @@ const verifyRequest = async (req: Request, res: Response, next: NextFunction) =>
         if (response.status === 200) {
             return next();
         } else {
+            const errorDetails = await response.text();
+            console.log("error details : ", errorDetails)
             return res.status(401).send('Unauthorized');
         }
     } catch (error) {
