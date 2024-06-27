@@ -16,7 +16,7 @@ import {
     restoreUploadImage,
     removeImage
 } from "../controllers/image.controller";
-import { verifyRequest } from "middleware/shopify-auth";
+import { verifyRequest } from "../middleware/shopify-auth";
 
 const imageRouter = Router();
 

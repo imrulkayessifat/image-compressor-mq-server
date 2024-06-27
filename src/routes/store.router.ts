@@ -10,7 +10,7 @@ import {
     updateStoreCustomCompressType
 } from "../controllers/store.controller";
 
-import { verifyRequest } from "middleware/shopify-auth";
+import { verifyRequest } from "../middleware/shopify-auth";
 
 const storeRouter = Router();
 
