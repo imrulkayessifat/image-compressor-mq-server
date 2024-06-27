@@ -25,7 +25,9 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
             const errorDetails = await store_data.text();
             res.status(401).json({ error: `${errorDetails}` })
         }
-        
+
+        console.log("shopify access token : ",shopifyAccessToken)
+
         const storeName = req.params.storeName;
         const allProducts = await db.product.findMany({
             where: {
