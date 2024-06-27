@@ -27,6 +27,7 @@ export const getBatchCompressImages = async (req: Request, res: Response): Promi
         res.status(200).json({ batch_compress_images_length: length });
     } catch (e) {
         console.log(e);
+        res.status(400).json({ error: 'something went wrong!' })
     }
 };
 
