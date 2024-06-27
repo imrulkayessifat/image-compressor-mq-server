@@ -13,18 +13,18 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
         if (!shopifyAccessToken) {
             res.status(401).json({ error: 'No token,authorization denied!' })
         }
-        const store_data = await fetch(`https://${req.params.storeName}/admin/api/2024-04/shop.json`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Shopify-Access-Token': shopifyAccessToken
-            }
-        })
+        // const store_data = await fetch(`https://${req.params.storeName}/admin/api/2024-04/shop.json`, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'X-Shopify-Access-Token': shopifyAccessToken
+        //     }
+        // })
 
-        if (!store_data.ok) {
-            const errorDetails = await store_data.text();
-            res.status(401).json({ error: `${errorDetails}` })
-        }
+        // if (!store_data.ok) {
+        //     const errorDetails = await store_data.text();
+        //     res.status(401).json({ error: `${errorDetails}` })
+        // }
 
         console.log("shopify access token : ",shopifyAccessToken)
 
