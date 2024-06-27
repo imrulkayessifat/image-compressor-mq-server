@@ -49,7 +49,7 @@ const verifyRequest = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
-imageRouter.get("/:storeName", verifyRequest, getAllImages);
+imageRouter.get("/:storeName", getAllImages);
 imageRouter.get("/sse", getImageThroughSSE);
 imageRouter.get("/:id", getSingleImage)
 imageRouter.get("/manual/:uuid", getSingleImageManual)
