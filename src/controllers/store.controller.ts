@@ -8,6 +8,7 @@ const db = new PrismaClient();
 export const getSingleStoreData = async (req: Request, res: Response): Promise<void> => {
 
     try {
+        const access_token = req.body.access_token;
         const response = await db.store.findFirst({
             where: {
                 name: req.body.storeName
@@ -40,6 +41,66 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                     storename: `${req.body.storeName}`
                 }
             })
+        }
+
+        const productsReq = await fetch(`https://${req.body.storeName}/admin/api/2024-04/products.json`, {
+            headers: {
+                'X-Shopify-Access-Token': `${access_token}`,
+            },
+        })
+
+        const { products } = await productsReq.json();
+
+        console.log("products : ",products)
+
+        for (const product of products) {
+
+            const { id, images } = product
+
+            const productExits = await db.product.findFirst({
+                where: {
+                    id: id.toString()
+                }
+            })
+
+            if (!productExits) {
+                const productRes = await db.product.create({
+                    data: {
+                        id: id.toString(),
+                        storename: req.body.storeName,
+                        title: product.title,
+                    }
+                })
+            }
+
+            for (const image of images) {
+                const { id: imageId, src: url, alt } = image
+                const imageIdStr = imageId.toString();
+                const newUrl = new URL(url);
+                const name = newUrl.pathname.split('/').pop() || null;
+
+                const imageExist = await db.image.findFirst({
+                    where: {
+                        id: imageIdStr
+                    }
+                })
+
+                if (!imageExist) {
+                    const imageRes = await db.image.create({
+                        data: {
+                            id: imageIdStr,
+                            url,
+                            name,
+                            fileRename: false,
+                            altRename: false,
+                            productId: id.toString(),
+                            status: 'NOT_COMPRESSED'
+                        }
+                    })
+                }
+
+            }
+
         }
 
         res.status(200).json({ data: response });
