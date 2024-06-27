@@ -22,14 +22,28 @@ const imageRouter = Router();
 
 const verifyRequest = async (req: Request, res: Response, next: NextFunction) => {
     const shopifyAccessToken = req.header('Authorization')
+    const shop = req.header('shop')
 
-    if (!shopifyAccessToken) {
-        res.status(401).json({ error: 'No token,authorization denied!' })
+    if (!shop || !shopifyAccessToken) {
+        return res.status(401).send('Unauthorized');
     }
 
-    console.log("shopify access token middleware : ", shopifyAccessToken);
+    console.log("shopify access token middleware :",shop,shopifyAccessToken)
 
-    next()
+    try {
+        const response = await fetch(`https://${shop}/admin/api/2024-04/shop.json`, {
+            headers: {
+                'X-Shopify-Access-Token': shopifyAccessToken
+            }
+        });
+        if (response.status === 200) {
+            return next();
+        } else {
+            return res.status(401).send('Unauthorized');
+        }
+    } catch (error) {
+        return res.status(401).send('Unauthorized');
+    }
 }
 
 imageRouter.get("/:storeName", verifyRequest, getAllImages);
