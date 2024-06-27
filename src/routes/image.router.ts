@@ -27,7 +27,7 @@ const verifyRequest = async (req: Request, res: Response, next: NextFunction) =>
         res.status(401).json({ error: 'No token,authorization denied!' })
     }
 
-    console.log("shopify access token : ", shopifyAccessToken);
+    console.log("shopify access token middleware : ", shopifyAccessToken);
 
     next()
 }
