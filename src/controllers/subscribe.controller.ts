@@ -20,25 +20,25 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
             }
         }
 
-        const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
+        // const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         'client_id': `${process.env.SHOPIFY_CLIENT_ID}`,
+        //         'client_secret': `${process.env.SHOPIFY_CLIENT_SECRET}`,
+        //         'grant_type': 'client_credentials'
+        //     })
+        // })
+
+        // const accessToken = await accessTokenResponse.json() as AccessTokenType;
+
+        const response = await fetch(`https://${req.header('Shop')}/admin/api/2024-04/recurring_application_charges.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'client_id': `${process.env.SHOPIFY_CLIENT_ID}`,
-                'client_secret': `${process.env.SHOPIFY_CLIENT_SECRET}`,
-                'grant_type': 'client_credentials'
-            })
-        })
-
-        const accessToken = await accessTokenResponse.json() as AccessTokenType;
-
-        const response = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-04/recurring_application_charges.json`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Shopify-Access-Token': `${accessToken.access_token}`,
+                'X-Shopify-Access-Token': `${req.header('Authorization')}`,
             },
             body: JSON.stringify(charge)
         })
