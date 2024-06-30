@@ -43,6 +43,8 @@ export const batchCompressImages = async (req: Request, res: Response): Promise<
             }
         })
 
+        console.log("batch compress : ", req.header('Authorization'), req.header('shop'))
+
         const data = fetch(`${process.env.MQSERVER}/image/auto-compression`, {
             method: 'POST',
             headers: {
