@@ -49,8 +49,8 @@ export const batchCompressImages = async (req: Request, res: Response): Promise<
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization':`${req.header('Authorization')}`,
-                'Shop':`${req.header('shop')}`
+                'Authorization': `${req.header('Authorization')}`,
+                'Shop': `${req.header('shop')}`
             },
             body: JSON.stringify({ store_name: req.body.store_name })
         })
@@ -98,10 +98,13 @@ export const batchRestoreImages = async (req: Request, res: Response): Promise<v
             }
         })
 
+        console.log("batch restore : ", req.header('Authorization'), req.header('shop'))
         const data = fetch(`${process.env.MQSERVER}/image/auto-restore`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `${req.header('Authorization')}`,
+                'Shop': `${req.header('shop')}`
             },
             body: JSON.stringify({ store_name: req.body.store_name })
         })

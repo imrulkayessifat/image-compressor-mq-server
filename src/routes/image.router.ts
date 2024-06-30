@@ -30,7 +30,7 @@ imageRouter.get("/image-status/:id", getImageStatus);
 imageRouter.post("/compress-image",verifyRequest, compressImage);
 imageRouter.post("/restore-image",verifyRequest, restoreImage)
 imageRouter.post("/auto-compression",verifyRequest, autoCompression)
-imageRouter.post("/auto-restore", autoRestore)
+imageRouter.post("/auto-restore",verifyRequest, autoRestore)
 imageRouter.post("/auto-file-rename", autoFileRename)
 imageRouter.post("/auto-alt-rename", autoAltRename)
 imageRouter.post("/upload-image", uploadImage)
