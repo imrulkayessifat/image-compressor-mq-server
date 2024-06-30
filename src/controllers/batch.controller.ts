@@ -49,6 +49,8 @@ export const batchCompressImages = async (req: Request, res: Response): Promise<
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization':`${req.header('Authorization')}`,
+                'Shop':`${req.header('shop')}`
             },
             body: JSON.stringify({ store_name: req.body.store_name })
         })

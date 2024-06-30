@@ -88,8 +88,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                         data: {
                             id: imageIdStr,
                             url,
-                            name:alt || name,
-                            alt:alt || name,
+                            name: alt || name,
+                            alt: alt || name,
                             fileRename: false,
                             altRename: false,
                             productId: id.toString(),
@@ -161,6 +161,8 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `${req.header('Authorization')}`,
+                    'Shop': `${req.header('shop')}`
                 },
                 body: JSON.stringify({ store_name: req.body.store_name })
             })

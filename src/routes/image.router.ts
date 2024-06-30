@@ -29,7 +29,7 @@ imageRouter.get("/manual/:uuid", getSingleImageManual)
 imageRouter.get("/image-status/:id", getImageStatus);
 imageRouter.post("/compress-image",verifyRequest, compressImage);
 imageRouter.post("/restore-image",verifyRequest, restoreImage)
-imageRouter.post("/auto-compression", autoCompression)
+imageRouter.post("/auto-compression",verifyRequest, autoCompression)
 imageRouter.post("/auto-restore", autoRestore)
 imageRouter.post("/auto-file-rename", autoFileRename)
 imageRouter.post("/auto-alt-rename", autoAltRename)
