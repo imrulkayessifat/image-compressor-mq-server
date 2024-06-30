@@ -5,9 +5,11 @@ import {
     updateAltRenameSetting
 } from "../controllers/altrename.controller";
 
+import { verifyRequest } from "../middleware/shopify-auth";
+
 const altRename = Router();
 
-altRename.get("/:storeName", getAltRenameSetting)
-altRename.put('/', updateAltRenameSetting)
+altRename.get("/:storeName", verifyRequest, getAltRenameSetting)
+altRename.put('/', verifyRequest, updateAltRenameSetting)
 
 export default altRename;

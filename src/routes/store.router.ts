@@ -20,7 +20,7 @@ storeRouter.post("/token", getStoreToken)
 storeRouter.put('/',verifyRequest, updateStoreAutoCompression)
 storeRouter.put('/auto-file-rename',verifyRequest, updateStoreAutoFileRename)
 storeRouter.put('/auto-alt-rename',verifyRequest, updateStoreAutoAltRename)
-storeRouter.put('/compression-type', updateStoreCompressType)
-storeRouter.put('/custom-compression-type', updateStoreCustomCompressType)
+storeRouter.put('/compression-type',verifyRequest, updateStoreCompressType)
+storeRouter.put('/custom-compression-type',verifyRequest, updateStoreCustomCompressType)
 
 export default storeRouter;
