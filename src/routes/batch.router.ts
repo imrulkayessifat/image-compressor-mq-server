@@ -13,8 +13,8 @@ const batchRouter = Router();
 
 batchRouter.get("/:storename",verifyRequest, getBatchCompressImages)
 batchRouter.get("/restore/:storename",verifyRequest, getBatchRestoreImages)
-batchRouter.post("/batch-compress", batchCompressImages)
-batchRouter.post("/batch-restore", batchRestoreImages)
+batchRouter.post("/batch-compress",verifyRequest, batchCompressImages)
+batchRouter.post("/batch-restore",verifyRequest, batchRestoreImages)
 
 
 export default batchRouter;
