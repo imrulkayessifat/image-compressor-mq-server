@@ -104,7 +104,7 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
 export const remove = async (req: Request, res: Response): Promise<void> => {
     try {
         const token = req.header('Authorization')
-        const { name } = req.query
+        const { name } = req.body
 
         console.log('remove', name)
 
