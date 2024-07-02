@@ -479,7 +479,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
 export const restoreUploadImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { uid, productid, url, storeName } = compressData;
+        const { uid, productid, url, store_name } = compressData;
 
         amqp.connect('amqp://localhost', (error0, connection) => {
             if (error0) {
@@ -493,7 +493,7 @@ export const restoreUploadImage = async (req: Request, res: Response): Promise<v
                 const queue = 'restore_to_uploader';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ uid, productid, url, storeName });
+                const data = JSON.stringify({ uid, productid, url, store_name });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Restore_Uploader Sent %s", uid);
 
