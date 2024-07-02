@@ -104,14 +104,16 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
 export const remove = async (req: Request, res: Response): Promise<void> => {
     try {
         const token = req.header('Authorization')
-        const {name} = req.query
+        const { name } = req.query
+
+        console.log('remove', name)
 
         if (!token) {
             res.status(401).json({ error: 'No token,authorization denied!' })
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
+        const accessTokenResponse = await fetch(`https://${name}/admin/oauth/access_token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +127,7 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
 
         const accessToken = await accessTokenResponse.json() as AccessTokenType;
 
-        const response = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-04/recurring_application_charges/${req.body.chargeId}.json`, {
+        const response = await fetch(`https://${name}/admin/api/2024-04/recurring_application_charges/${req.body.chargeId}.json`, {
             method: 'DELETE',
             headers: {
                 'X-Shopify-Access-Token': `${accessToken.access_token}`
