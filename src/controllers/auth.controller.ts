@@ -56,7 +56,8 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
         res.status(200).json({
             accessToken: token,
-            user: userExit
+            user: userExit,
+            success:'admin identified!'
         });
     } catch (e) {
         console.log(e);
