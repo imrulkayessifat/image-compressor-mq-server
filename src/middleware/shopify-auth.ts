@@ -4,6 +4,8 @@ export const verifyRequest = async (req: Request, res: Response, next: NextFunct
     const shopifyAccessToken = req.header('Authorization')
     const shop = req.header('Shop')
 
+    console.log("verfiy request",shopifyAccessToken,shop)
+
     if (!shop || !shopifyAccessToken) {
         return res.status(401).send('Unauthorized');
     }
