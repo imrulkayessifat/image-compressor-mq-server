@@ -4,6 +4,7 @@ import {
     autoFileRename,
     restoreFileName,
     altRename,
+    autoAltRename,
     restoreAltTag
 } from "../controllers/rename.controller";
 
@@ -15,6 +16,7 @@ renameRouter.put("/file-rename", verifyRequest, fileRename);
 renameRouter.put("/auto-file-rename", autoFileRename);
 renameRouter.put("/restore-file-name", verifyRequest, restoreFileName)
 renameRouter.put("/alt-rename", verifyRequest, altRename)
+renameRouter.put("/auto-alt-rename", autoAltRename)
 renameRouter.put("/restore-alt-tag", verifyRequest, restoreAltTag)
 
 export default renameRouter;
