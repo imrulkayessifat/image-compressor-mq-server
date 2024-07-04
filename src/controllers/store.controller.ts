@@ -162,7 +162,7 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `${req.header('Authorization')}`,
-                    'Shop': `${req.header('shop')}`
+                    'Shop': `${req.header('Shop')}`
                 },
                 body: JSON.stringify({ store_name: req.body.store_name })
             })

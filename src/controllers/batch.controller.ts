@@ -43,14 +43,14 @@ export const batchCompressImages = async (req: Request, res: Response): Promise<
             }
         })
 
-        console.log("batch compress : ", req.header('Authorization'), req.header('shop'))
+        console.log("batch compress : ", req.header('Authorization'), req.header('Shop'))
 
         const data = fetch(`${process.env.MQSERVER}/image/auto-compression`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `${req.header('Authorization')}`,
-                'Shop': `${req.header('shop')}`
+                'Shop': `${req.header('Shop')}`
             },
             body: JSON.stringify({ store_name: req.body.store_name })
         })
@@ -98,13 +98,13 @@ export const batchRestoreImages = async (req: Request, res: Response): Promise<v
             }
         })
 
-        console.log("batch restore : ", req.header('Authorization'), req.header('shop'))
+        console.log("batch restore : ", req.header('Authorization'), req.header('Shop'))
         const data = fetch(`${process.env.MQSERVER}/image/auto-restore`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `${req.header('Authorization')}`,
-                'Shop': `${req.header('shop')}`
+                'Shop': `${req.header('Shop')}`
             },
             body: JSON.stringify({ store_name: req.body.store_name })
         })

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 export const verifyRequest = async (req: Request, res: Response, next: NextFunction) => {
     const shopifyAccessToken = req.header('Authorization')
-    const shop = req.header('shop')
+    const shop = req.header('Shop')
 
     if (!shop || !shopifyAccessToken) {
         return res.status(401).send('Unauthorized');
