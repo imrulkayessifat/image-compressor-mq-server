@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     fileRename,
+    autoFileRename,
     restoreFileName,
     altRename,
     restoreAltTag
@@ -11,6 +12,7 @@ import { verifyRequest } from "../middleware/shopify-auth";
 const renameRouter = Router();
 
 renameRouter.put("/file-rename", verifyRequest, fileRename);
+renameRouter.put("/auto-file-rename", autoFileRename);
 renameRouter.put("/restore-file-name", verifyRequest, restoreFileName)
 renameRouter.put("/alt-rename", verifyRequest, altRename)
 renameRouter.put("/restore-alt-tag", verifyRequest, restoreAltTag)

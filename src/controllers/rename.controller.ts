@@ -109,6 +109,99 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
 }
 
+export const autoFileRename = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const uid = req.body.uid;
+        const storeName = req.body.storeName;
+
+        const store = await db.store.findFirst({
+            where: {
+                name: storeName
+            }
+        })
+
+        if (store.plan == 'FREE') {
+            res.status(403).json({ error: "don't have premium subscription" })
+        }
+
+        const fileRename = await db.filerename.findFirst({
+            where: {
+                storename: storeName
+            }
+        })
+
+        const trueFields = Object.keys(fileRename).filter((key) => {
+            return fileRename[key as keyof FileRenameProps] === true;
+        });
+
+        const imageReq = await db.image.findFirst({
+            where: {
+                uid: parseInt(uid)
+            },
+        })
+
+        const isBackupFileNameAvailable = await db.backupfilename.findFirst({
+            where: {
+                restoreId: `${imageReq.uid}`
+            }
+        })
+
+        if (isBackupFileNameAvailable === null) {
+            await db.backupfilename.create({
+                data: {
+                    restoreId: `${imageReq.uid}`,
+                    name: imageReq.name
+                }
+            })
+        }
+
+        if (!imageReq) {
+            res.status(404).json({ error: "Image not found" });
+        }
+
+        const productReq = await db.product.findFirst({
+            where: {
+                id: imageReq?.productId
+            }
+        })
+
+        if (!productReq) {
+            res.status(404).json({ error: "Product not found" });
+        }
+
+        const result = trueFields.reduce((acc, field) => {
+            acc[field] = productReq[field as keyof typeof productReq];
+            return acc;
+        }, {} as Record<string, any>);
+
+        const concatenatedValues = Object.values(result)
+            .filter(value => value !== '')
+            .join('-');
+
+        const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
+
+        const updateImageName = await db.image.update({
+            where: {
+                uid: parseInt(uid)
+            },
+            data: {
+                name: imageRename,
+                fileRename: true
+            }
+        })
+
+        io.emit('image_model', () => {
+            console.log('an event occured in file rename');
+        });
+
+        res.status(200).json({ data: updateImageName })
+    } catch (e) {
+        res.status(400).json({ error: 'something went wrong!' })
+    }
+
+
+}
+
 export const restoreFileName = async (req: Request, res: Response): Promise<void> => {
     try {
         const restoreId = req.body.restoreId;
