@@ -9,14 +9,14 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
 
     try {
         const access_token = req.body.access_token;
-        const response = await db.store.findFirst({
+        let response = await db.store.findFirst({
             where: {
                 name: req.body.storeName
             }
         })
 
         if (response === null && req.body.storeName !== "undefined") {
-            await db.store.create({
+            response = await db.store.create({
                 data: {
                     name: `${req.body.storeName}`
                 }
@@ -101,6 +101,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             }
 
         }
+
+        console.log("store response", response)
 
         res.status(200).json({ data: response });
     } catch (e) {
