@@ -8,45 +8,16 @@ const db = new PrismaClient();
 
 export const getAllImages = async (req: Request, res: Response): Promise<void> => {
     try {
-        // const shopifyAccessToken = req.header('Authorization')
-
-        // if (!shopifyAccessToken) {
-        //     res.status(401).json({ error: 'No token,authorization denied!' })
-        // }
-        // const store_data = await fetch(`https://${req.params.storeName}/admin/api/2024-04/shop.json`, {
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'X-Shopify-Access-Token': shopifyAccessToken
-        //     }
-        // })
-
-        // if (!store_data.ok) {
-        //     const errorDetails = await store_data.text();
-        //     res.status(401).json({ error: `${errorDetails}` })
-        // }
-
-        // console.log("shopify access token : ",shopifyAccessToken)
-
+        
         const storeName = req.params.storeName;
-        const allProducts = await db.product.findMany({
+
+        const images = await db.image.findMany({
             where: {
                 storename: storeName
             }
         })
-        let images: Image[] = []
 
-        for (const product of allProducts) {
-            const allImages = await db.image.findMany({
-                where: {
-                    productId: product.id
-                }
-            })
-
-            for (const image of allImages) {
-                images.push(image)
-            }
-        }
+        
         res.status(200).json({ data: images });
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })

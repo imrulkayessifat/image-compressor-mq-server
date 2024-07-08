@@ -95,7 +95,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                             fileRename: false,
                             altRename: false,
                             productId: id.toString(),
-                            status: 'NOT_COMPRESSED'
+                            status: 'NOT_COMPRESSED',
+                            storename: `${req.body.storeName}`
                         }
                     })
                 }

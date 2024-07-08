@@ -8,11 +8,15 @@ export const getAltRenameSetting = async (req: Request, res: Response): Promise<
     try {
         const storeName = req.params.storeName;
 
-        const altrename = await db.altrename.findUnique({
-            where: {
+        const filerenameInput = {
+            id_storename: {
                 id: '1',
-                storename: storeName
-            }
+                storename: storeName,
+            },
+        };
+
+        const altrename = await db.altrename.findUnique({
+            where: filerenameInput
         });
 
         res.status(200).json({ altrename });
@@ -25,12 +29,16 @@ export const updateAltRenameSetting = async (req: Request, res: Response): Promi
     try {
         const data = req.body;
 
-        const altrename = await db.altrename.update({
-            where:{
-                id:'1',
-                storename:data.storename
+        const filerenameInput = {
+            id_storename: {
+                id: '1',
+                storename: data.storeName,
             },
-            data:{
+        };
+
+        const altrename = await db.altrename.update({
+            where: filerenameInput,
+            data: {
                 ...data
             }
         })

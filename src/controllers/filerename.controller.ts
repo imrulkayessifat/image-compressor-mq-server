@@ -8,11 +8,15 @@ export const getFileRenameSetting = async (req: Request, res: Response): Promise
     try {
         const storeName = req.params.storeName;
 
-        const filerename = await db.filerename.findUnique({
-            where: {
+        const filerenameInput = {
+            id_storename: {
                 id: '1',
-                storename: storeName
-            }
+                storename: storeName,
+            },
+        };
+
+        const filerename = await db.filerename.findUnique({
+            where: filerenameInput,
         });
 
         res.status(200).json({ filerename });
@@ -25,12 +29,16 @@ export const updateFileRenameSetting = async (req: Request, res: Response): Prom
     try {
         const data = req.body;
 
-        const filerename = await db.filerename.update({
-            where:{
-                id:'1',
-                storename:data.storename
+        const filerenameInput = {
+            id_storename: {
+                id: '1',
+                storename: data.storename,
             },
-            data:{
+        };
+
+        const filerename = await db.filerename.update({
+            where: filerenameInput,
+            data: {
                 ...data
             }
         })
