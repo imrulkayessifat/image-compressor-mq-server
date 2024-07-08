@@ -15,6 +15,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             }
         })
 
+        console.log("debug : ", response, req.body.storeName)
+
         if (response === null && req.body.storeName !== "undefined") {
             response = await db.store.create({
                 data: {
