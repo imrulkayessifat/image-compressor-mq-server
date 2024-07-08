@@ -62,6 +62,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
 
         const { products } = await productsReq.json();
 
+        console.log("get products")
+
         for (const product of products) {
 
             const { id, images } = product
@@ -108,6 +110,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                             storename: `${req.body.storeName}`
                         }
                     })
+                    console.log("image created")
                 }
 
             }
