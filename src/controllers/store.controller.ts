@@ -15,7 +15,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             }
         })
 
-        console.log("debug : ", response, req.body.storeName,access_token)
+        console.log("debug : ", response, req.body.storeName, access_token)
 
         if (response === null && req.body.storeName !== "undefined") {
             response = await db.store.create({
@@ -95,6 +95,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                         id: imageIdStr
                     }
                 })
+
+                console.log("image exist", imageExist)
 
                 if (!imageExist) {
                     const imageRes = await db.image.create({
