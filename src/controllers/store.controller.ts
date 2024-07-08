@@ -23,6 +23,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                     name: `${req.body.storeName}`
                 }
             })
+
+            console.log("store created")
             await db.product.create({
                 data: {
                     id: '1',
@@ -31,18 +33,25 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                     storename: `${req.body.storeName}`
                 }
             })
+            console.log("product created")
+
             await db.filerename.create({
                 data: {
                     id: '1',
                     storename: `${req.body.storeName}`
                 }
             })
+
+            console.log("filename created")
+
             await db.altrename.create({
                 data: {
                     id: '1',
                     storename: `${req.body.storeName}`
                 }
             })
+
+            console.log("altname created")
         }
 
         const productsReq = await fetch(`https://${req.body.storeName}/admin/api/2024-04/products.json`, {
