@@ -19,6 +19,7 @@ import altRename from './routes/altename.router';
 import batchRouter from './routes/batch.router';
 import authRouter from './routes/auth.router';
 import subscriptionPlanRouter from './routes/subscription-plan.router';
+import sessionRouter from './routes/session.router';
 
 
 const app = express();
@@ -57,6 +58,7 @@ app.use("/altrename", altRename)
 app.use("/batch", batchRouter)
 app.use("/auth", authRouter)
 app.use("/subscription-plan", subscriptionPlanRouter)
+app.use("/session", sessionRouter)
 
 app.get("/", (req, res) => {
     res.json({ message: "demo response from mq server" }).status(200);
