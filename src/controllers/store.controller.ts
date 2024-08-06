@@ -103,8 +103,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                         data: {
                             id: imageIdStr,
                             url,
-                            name: alt || name,
-                            alt: alt || name,
+                            name: name,
+                            alt: name,
                             fileRename: false,
                             altRename: false,
                             productId: id.toString(),
