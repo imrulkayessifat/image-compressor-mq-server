@@ -80,6 +80,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                         id: id.toString(),
                         storename: req.body.storeName,
                         title: product.title,
+                        product_title: product.title,
                     }
                 })
             }
