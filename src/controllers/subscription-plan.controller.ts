@@ -14,6 +14,21 @@ export const getAllSubscriptionPlan = async (req: Request, res: Response): Promi
     }
 };
 
+export const getSingleSubscriptionPlanByName = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const name = req.params.name;
+        const subscriptionPlan = await db.subscriptionPlan.findFirst({
+            where:{
+                name
+            }
+        });
+
+        res.status(200).json({ data: subscriptionPlan });
+    } catch (e) {
+        res.status(400).json({ error: 'something went wrong!' })
+    }
+};
+
 export const getSingleSubscriptionPlan = async (req: Request, res: Response): Promise<void> => {
     try {
         const token = req.header('Authorization')
