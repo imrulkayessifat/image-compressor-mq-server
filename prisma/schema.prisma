@@ -119,7 +119,7 @@ model Filerename {
   product_title      Boolean @default(true)
   product_sku        Boolean @default(false)
   storename          String
-  store              Store   @relation(fields: [storename], references: [name])
+  store              Store   @relation(fields: [storename], references: [name], onDelete: Cascade)
 
   @@id([id, storename])
 }
@@ -134,7 +134,7 @@ model Altrename {
   product_title      Boolean @default(true)
   product_sku        Boolean @default(false)
   storename          String
-  store              Store   @relation(fields: [storename], references: [name])
+  store              Store   @relation(fields: [storename], references: [name], onDelete: Cascade)
 
   @@id([id, storename])
 }
@@ -151,7 +151,7 @@ model Product {
   product_title      String? @default("")
   product_sku        String? @default("")
   storename          String
-  store              Store   @relation(fields: [storename], references: [name])
+  store              Store   @relation(fields: [storename], references: [name], onDelete: Cascade)
 
   @@id([id, storename])
 }
@@ -167,7 +167,7 @@ model Image {
   fileRename Boolean? @default(false)
   altRename  Boolean? @default(false)
   storename  String
-  product    Product  @relation(fields: [productId, storename], references: [id, storename])
+  product    Product  @relation(fields: [productId, storename], references: [id, storename], onDelete: Cascade)
 }
 
 model Backupimage {
