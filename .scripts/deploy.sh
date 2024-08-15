@@ -7,7 +7,7 @@ echo "Deployment started ..."
 git pull origin main
 echo "New changes copied to server !"
 
-echo "Installing Dependencies..."
+echo "Installing Dependencies...."
 npm install --yes
 
 echo "PM2 Reload"
