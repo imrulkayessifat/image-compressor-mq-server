@@ -1,0 +1,30 @@
+
+version: '3.8'
+
+services:
+
+
+  postgres:
+
+    image: postgres:13.5
+
+    restart: always
+
+    environment:
+
+      - POSTGRES_USER=imrul
+
+      - POSTGRES_PASSWORD=asdf
+
+    volumes:
+
+      - postgres:/var/lib/postgresql/photo-optima
+
+    ports:
+
+      - '5432:5432'
+
+
+volumes:
+
+  postgres:
