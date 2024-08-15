@@ -46,23 +46,23 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
     try {
         const { shop, charge_id } = req.query;
 
-        const accessTokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'client_id': `${process.env.SHOPIFY_CLIENT_ID}`,
-                'client_secret': `${process.env.SHOPIFY_CLIENT_SECRET}`,
-                'grant_type': 'client_credentials'
-            })
-        })
+        console.log("confirmation : ",shop,charge_id)
 
-        const accessToken = await accessTokenResponse.json() as AccessTokenType;
+        const accessTokenResponse = await fetch(`${process.env.MQSERVER}/session/${shop}`, {
+            method: 'GET',
+        });
+
+
+        if (!accessTokenResponse.ok) {
+            const errorDetails = await accessTokenResponse.text();
+            return;
+        }
+
+        const { access_token } = await accessTokenResponse.json();
 
         const response = await fetch(`https://${shop}/admin/api/2024-04/recurring_application_charges/${charge_id}.json`, {
             headers: {
-                'X-Shopify-Access-Token': `${accessToken.access_token}`
+                'X-Shopify-Access-Token': `${access_token}`
             },
         })
 
