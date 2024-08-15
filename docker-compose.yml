@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=sifat
-      - POSTGRES_PASSWORD=asdf
+      - POSTGRES_PASSWORD=@ppB100m
     volumes:
       - postgres:/var/lib/postgresql/photo-optima
     ports:
