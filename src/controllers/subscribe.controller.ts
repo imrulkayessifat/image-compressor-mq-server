@@ -20,19 +20,7 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
             }
         }
 
-        // const accessTokenResponse = await fetch(`https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         'client_id': `${process.env.SHOPIFY_CLIENT_ID}`,
-        //         'client_secret': `${process.env.SHOPIFY_CLIENT_SECRET}`,
-        //         'grant_type': 'client_credentials'
-        //     })
-        // })
-
-        // const accessToken = await accessTokenResponse.json() as AccessTokenType;
+        console.log("shop",req.header('Shop'))
 
         const response = await fetch(`https://${req.header('Shop')}/admin/api/2024-04/recurring_application_charges.json`, {
             method: 'POST',
@@ -43,6 +31,8 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
             body: JSON.stringify(charge)
         })
         const url = await response.json()
+
+        console.log("subscription url",url)
 
         res.status(201).json({ data: url });
     } catch (e) {
