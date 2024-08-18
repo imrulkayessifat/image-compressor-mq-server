@@ -17,7 +17,7 @@ import {
     removeImage
 } from "../controllers/image.controller";
 import { verifyRequest } from "../middleware/shopify-auth";
-import { rateLimiterUsingThirdParty } from "middleware/rate-limiter";
+import { rateLimiterUsingThirdParty } from "../middleware/rate-limiter";
 
 const imageRouter = Router();
 
