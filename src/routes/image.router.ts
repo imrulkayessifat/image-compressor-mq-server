@@ -17,21 +17,18 @@ import {
     removeImage
 } from "../controllers/image.controller";
 import { verifyRequest } from "../middleware/shopify-auth";
-import { rateLimiterUsingThirdParty } from "../middleware/rate-limiter";
 
 const imageRouter = Router();
 
-
-
-imageRouter.get("/:storeName",verifyRequest, getAllImages);
+imageRouter.get("/:storeName", verifyRequest, getAllImages);
 imageRouter.get("/sse", getImageThroughSSE);
 imageRouter.get("/:id", getSingleImage)
 imageRouter.get("/manual/:uuid", getSingleImageManual)
 imageRouter.get("/image-status/:id", getImageStatus);
-imageRouter.post("/compress-image",verifyRequest,rateLimiterUsingThirdParty, compressImage);
-imageRouter.post("/restore-image",verifyRequest, restoreImage)
-imageRouter.post("/auto-compression",verifyRequest,rateLimiterUsingThirdParty, autoCompression)
-imageRouter.post("/auto-restore",verifyRequest, autoRestore)
+imageRouter.post("/compress-image", verifyRequest, compressImage);
+imageRouter.post("/restore-image", verifyRequest, restoreImage)
+imageRouter.post("/auto-compression", verifyRequest, autoCompression)
+imageRouter.post("/auto-restore", verifyRequest, autoRestore)
 imageRouter.post("/auto-file-rename", autoFileRename)
 imageRouter.post("/auto-alt-rename", autoAltRename)
 imageRouter.post("/upload-image", uploadImage)
