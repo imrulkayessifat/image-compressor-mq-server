@@ -14,7 +14,10 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
         const images = await db.image.findMany({
             where: {
                 storename: storeName
-            }
+            },
+            orderBy: {
+                uid: 'asc'
+            }        
         })
 
         
