@@ -79,8 +79,8 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                     data: {
                         id: id.toString(),
                         storename: req.body.storeName,
-                        title: product.title,
-                        product_title: product.title,
+                        title: product.title.replace(/\.([^\s])/g, ". $1").replace(/\./g, ""),
+                        product_title: product.title.replace(/\.([^\s])/g, ". $1").replace(/\./g, ""),
                     }
                 })
             }
