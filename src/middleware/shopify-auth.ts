@@ -18,6 +18,11 @@ const rateLimiter = async (url: string, options?: RequestInit): Promise<globalTh
             return rateLimiter(url, options);
         }
 
+        if(currentCalls === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 1.0 * 1000))
+            return rateLimiter(url, options);
+        }
+
         return response;
 
     } catch (error) {
