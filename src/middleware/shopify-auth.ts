@@ -1,6 +1,8 @@
 import { Request, NextFunction, Response } from "express";
 
-const rateLimiter = async (url: string, options?: RequestInit): Promise<globalThis.Response> => {
+const rateLimiter = async (url: string, options?: RequestInit,attempt: number = 1): Promise<globalThis.Response> => {
+    const backoffFactor = 2;
+    const maxAttempts = 5; 
     try {
 
         let response = await fetch(url, options);
@@ -18,18 +20,17 @@ const rateLimiter = async (url: string, options?: RequestInit): Promise<globalTh
             return rateLimiter(url, options);
         }
 
-        if(currentCalls === 0) {
-            await new Promise((resolve) => setTimeout(resolve, 1.0 * 1000))
-            return rateLimiter(url, options);
-        }
-
         return response;
 
     } catch (error) {
-        console.error(`Fetch failed for URL: ${url} ${options.method}`, error);
-        await rateLimiter(url,options)
+        console.error(`Fetch failed for ${attempt} URL: ${url} ${options.method}`, error);
+        if (attempt < maxAttempts) {
+            await new Promise((resolve) => setTimeout(resolve, backoffFactor * 1000)); // Exponential backoff
+            return rateLimiter(url, options,attempt + 1); // Return the recursive call
+        } else {
+            throw new Error(`Failed after ${attempt} attempts`);
+        }
     }
-
 }
 
 export const verifyRequest = async (req: Request, res: Response, next: NextFunction) => {
