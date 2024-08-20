@@ -1,22 +1,30 @@
 import { Request, NextFunction, Response } from "express";
 
 const rateLimiter = async (url: string, options?: RequestInit): Promise<globalThis.Response> => {
-    let response = await fetch(url, options);
+    try {
 
-    const callLimitHeader = response.headers.get('X-Shopify-Shop-Api-Call-Limit') || '0/40';
-    const retryAfterHeader = response.headers.get('Retry-After');
+        let response = await fetch(url, options);
 
-    const [currentCalls, maxCalls] = callLimitHeader.split('/').map(Number);
-    console.log(`rate limiting : ${currentCalls}/${maxCalls}`);
+        const callLimitHeader = response.headers.get('X-Shopify-Shop-Api-Call-Limit') || '0/40';
+        const retryAfterHeader = response.headers.get('Retry-After');
 
-    if (retryAfterHeader) {
-        console.log("retryAfterHeader : ", retryAfterHeader)
-        await new Promise((resolve) => setTimeout(resolve, parseFloat(retryAfterHeader) * 1000))
+        const [currentCalls, maxCalls] = callLimitHeader.split('/').map(Number);
+        console.log(`rate limiting : ${currentCalls}/${maxCalls}`);
 
-        return rateLimiter(url, options);
+        if (retryAfterHeader) {
+            console.log("retryAfterHeader : ", retryAfterHeader)
+            await new Promise((resolve) => setTimeout(resolve, parseFloat(retryAfterHeader) * 1000))
+
+            return rateLimiter(url, options);
+        }
+
+        return response;
+
+    } catch (error) {
+        console.error(`Fetch failed for URL: ${url} ${options.method}`, error);
+        await rateLimiter(url,options)
     }
 
-    return response;
 }
 
 export const verifyRequest = async (req: Request, res: Response, next: NextFunction) => {
@@ -33,6 +41,7 @@ export const verifyRequest = async (req: Request, res: Response, next: NextFunct
 
     try {
         const response = await rateLimiter(`https://${shop}/admin/api/2024-04/shop.json`, {
+            method:'GET',
             headers: {
                 'X-Shopify-Access-Token': shopifyAccessToken
             }
