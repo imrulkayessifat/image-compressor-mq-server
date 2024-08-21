@@ -13,9 +13,9 @@ const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.R
     }
 );
 
-const rateLimiter = async (url: string, options?: RequestInit,attempt: number = 1): Promise<globalThis.Response> => {
+const rateLimiter = async (url: string, options?: RequestInit, attempt: number = 1): Promise<globalThis.Response> => {
     const backoffFactor = 2;
-    const maxAttempts = 5; 
+    const maxAttempts = 5;
     try {
 
         let response = await limitedFetch(url, options);
@@ -31,6 +31,10 @@ const rateLimiter = async (url: string, options?: RequestInit,attempt: number = 
             await new Promise((resolve) => setTimeout(resolve, parseFloat(retryAfterHeader) * 1000))
 
             return rateLimiter(url, options);
+        } else if (currentCalls === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
+
+            return rateLimiter(url, options);
         }
 
         return response;
@@ -39,7 +43,7 @@ const rateLimiter = async (url: string, options?: RequestInit,attempt: number = 
         console.error(`Fetch failed for ${attempt} URL: ${url} ${options.method}`, error);
         if (attempt < maxAttempts) {
             await new Promise((resolve) => setTimeout(resolve, backoffFactor * 1000)); // Exponential backoff
-            return rateLimiter(url, options,attempt + 1); // Return the recursive call
+            return rateLimiter(url, options, attempt + 1); // Return the recursive call
         } else {
             throw new Error(`Failed after ${attempt} attempts`);
         }
