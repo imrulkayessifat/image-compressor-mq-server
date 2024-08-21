@@ -1,11 +1,24 @@
 import { Request, NextFunction, Response } from "express";
 
+import Bottleneck from "bottleneck";
+
+const limiter = new Bottleneck({
+    minTime: 200, // 500ms delay between requests
+    // maxConcurrent: 1 // Ensures only one request is processed at a time
+});
+
+const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.Response> = limiter.wrap(
+    (url: string, options?: RequestInit): Promise<globalThis.Response> => {
+        return fetch(url, options);
+    }
+);
+
 const rateLimiter = async (url: string, options?: RequestInit,attempt: number = 1): Promise<globalThis.Response> => {
     const backoffFactor = 2;
     const maxAttempts = 5; 
     try {
 
-        let response = await fetch(url, options);
+        let response = await limitedFetch(url, options);
 
         const callLimitHeader = response.headers.get('X-Shopify-Shop-Api-Call-Limit') || '0/40';
         const retryAfterHeader = response.headers.get('Retry-After');

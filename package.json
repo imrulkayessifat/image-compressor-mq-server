@@ -29,6 +29,7 @@
     "amqplib": "^0.10.3",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
+    "bottleneck": "^2.19.5",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
