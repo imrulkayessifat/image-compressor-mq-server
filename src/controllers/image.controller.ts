@@ -2,13 +2,26 @@ import amqp from 'amqplib/callback_api';
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { Image } from '@prisma/client';
+
+import Bottleneck from "bottleneck";
+
+const limiter = new Bottleneck({
+    minTime: 200, // 500ms delay between requests
+    // maxConcurrent: 1 // Ensures only one request is processed at a time
+});
+
+const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.Response> = limiter.wrap(
+    (url: string, options?: RequestInit): Promise<globalThis.Response> => {
+        return fetch(url, options);
+    }
+);
 import { io } from '../index';
 
 const db = new PrismaClient();
 
 export const getAllImages = async (req: Request, res: Response): Promise<void> => {
     try {
-        
+
         const storeName = req.params.storeName;
 
         const images = await db.image.findMany({
@@ -17,15 +30,43 @@ export const getAllImages = async (req: Request, res: Response): Promise<void> =
             },
             orderBy: {
                 uid: 'asc'
-            }        
+            }
         })
 
-        
+
         res.status(200).json({ data: images });
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
 };
+
+export const caculateImageSize = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const uid = parseInt(req.params.uid);
+        const url = req.body.url;
+        const response = await limitedFetch(url);
+        if (!response.ok) {
+            throw new Error(`Error fetching! status: ${response.status}`);
+        }
+
+        const sourceLength = response.headers.get('source-length');
+
+        const sizeInMB = parseInt(sourceLength) / 1000000
+        let length = parseFloat(sizeInMB.toFixed(2));
+        const data = await db.image.update({
+            where: {
+                uid
+            },
+            data: {
+                size: length
+            }
+        })
+        console.log("calculate size : ",uid,length)
+        res.status(200).json({ data });
+    } catch (e) {
+        res.status(400).json({ error: 'something went wrong!' })
+    }
+}
 
 export const getImageThroughSSE = async (req: Request, res: Response): Promise<void> => {
     try {

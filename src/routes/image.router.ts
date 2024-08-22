@@ -4,6 +4,7 @@ import {
     getAllImages,
     getImageThroughSSE,
     getSingleImage,
+    caculateImageSize,
     getSingleImageManual,
     getImageStatus,
     compressImage,
@@ -21,6 +22,7 @@ import { verifyRequest } from "../middleware/shopify-auth";
 const imageRouter = Router();
 
 imageRouter.get("/:storeName", verifyRequest, getAllImages);
+imageRouter.patch("/:uid", caculateImageSize)
 imageRouter.get("/sse", getImageThroughSSE);
 imageRouter.get("/:id", getSingleImage)
 imageRouter.get("/manual/:uuid", getSingleImageManual)
