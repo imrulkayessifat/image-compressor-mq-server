@@ -149,14 +149,14 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
     try {
         const compressData = req.body;
         const { uid, productid, url, storeName, size, extension } = compressData;
-        console.log('comressImage',extension)
+        console.log('comressImage', extension)
 
         await db.image.update({
             where: { uid: parseInt(uid) },
             data: { status: 'ONGOING' },
         });
-
-        io.emit('image_model', () => {
+        const uniqueEventId = `${productid}_${uid}`;
+        io.emit('image_model', { eventId: uniqueEventId, productid, imageId: uid }, () => {
             console.log('an event occured in auto compression');
         });
 
@@ -271,8 +271,8 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                     where: { uid: uid },
                     data: { status: 'ONGOING' },
                 });
-
-                io.emit('image_model', () => {
+                const uniqueEventId = `${productId}_${uid}`;
+                io.emit('image_model', { eventId: uniqueEventId, productId, imageId: uid }, () => {
                     console.log('an event occured in auto compression');
                 });
 
@@ -340,8 +340,9 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
                     where: { uid: uid },
                     data: { status: 'RESTORING' },
                 });
+                const uniqueEventId = `${productId}_${uid}`;
 
-                io.emit('image_model', () => {
+                io.emit('image_model', { eventId: uniqueEventId, productId, imageId: uid }, () => {
                     console.log('an event occured in auto restore');
                 });
 
