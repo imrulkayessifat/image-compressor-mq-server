@@ -36,6 +36,12 @@ enum CompressType {
   CUSTOM
 }
 
+enum Extenstion {
+  PNG
+  GPEG
+  OTHERS
+}
+
 model Session {
   id               String            @id @default(uuid())
   accessToken      String?
@@ -157,18 +163,19 @@ model Product {
 }
 
 model Image {
-  uid        Int      @id @default(autoincrement())
+  uid        Int        @id @default(autoincrement())
   id         String
   url        String
-  size       Float    @default(0.0)
+  size       Float      @default(0.0)
+  extension  Extenstion?
   name       String?
   alt        String?
   productId  String
-  status     Status?  @default(NOT_COMPRESSED)
-  fileRename Boolean? @default(false)
-  altRename  Boolean? @default(false)
+  status     Status?    @default(NOT_COMPRESSED)
+  fileRename Boolean?   @default(false)
+  altRename  Boolean?   @default(false)
   storename  String
-  product    Product  @relation(fields: [productId, storename], references: [id, storename], onDelete: Cascade)
+  product    Product    @relation(fields: [productId, storename], references: [id, storename], onDelete: Cascade)
 }
 
 model Backupimage {
