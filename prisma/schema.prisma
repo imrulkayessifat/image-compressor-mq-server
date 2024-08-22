@@ -160,6 +160,7 @@ model Image {
   uid        Int      @id @default(autoincrement())
   id         String
   url        String
+  size       Float    @default(0.0)
   name       String?
   alt        String?
   productId  String
