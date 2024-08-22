@@ -149,6 +149,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
     try {
         const compressData = req.body;
         const { uid, productid, url, storeName, size, extension } = compressData;
+        console.log('comressImage',extension)
 
         await db.image.update({
             where: { uid: parseInt(uid) },
