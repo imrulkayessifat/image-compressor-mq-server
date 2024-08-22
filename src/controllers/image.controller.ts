@@ -61,7 +61,7 @@ export const caculateImageSize = async (req: Request, res: Response): Promise<vo
                 size: length
             }
         })
-        console.log("calculate size : ",uid,length)
+        console.log("calculate size : ", uid, length)
         res.status(200).json({ data });
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
@@ -128,7 +128,7 @@ export const getImageStatus = async (req: Request, res: Response): Promise<void>
 export const compressImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { uid, productid, url, storeName } = compressData;
+        const { uid, productid, url, storeName, size } = compressData;
 
         await db.image.update({
             where: { uid: parseInt(uid) },
@@ -147,7 +147,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
                 const queue = 'shopify_to_compressor';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ uid, productid, url, storeName });
+                const data = JSON.stringify({ uid, productid, url, storeName, size });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to shopify_to_compressor %s", uid);
 
@@ -241,7 +241,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
             })
 
             for (const image of allImages) {
-                const { uid, productId, url } = image;
+                const { uid, productId, url, size } = image;
                 await db.image.update({
                     where: { uid: uid },
                     data: { status: 'ONGOING' },
@@ -263,7 +263,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                         const queue = 'auto_compression';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ uid, productId, url, store_name });
+                        const data = JSON.stringify({ uid, productId, url, store_name, size });
                         channel.sendToQueue(queue, Buffer.from(data));
                         console.log(" [x] Sent %s", uid);
 
