@@ -156,6 +156,10 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
             data: { status: 'ONGOING' },
         });
 
+        io.emit('image_model', () => {
+            console.log('an event occured in auto compression');
+        });
+
         amqp.connect('amqp://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
             if (error0) {
                 throw error0;
