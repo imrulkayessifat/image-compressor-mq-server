@@ -2,6 +2,7 @@ import amqp from 'amqplib/callback_api';
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { Image } from '@prisma/client';
+import { Extenstion } from '@prisma/client';
 
 import Bottleneck from "bottleneck";
 
@@ -44,24 +45,43 @@ export const caculateImageSize = async (req: Request, res: Response): Promise<vo
     try {
         const uid = parseInt(req.params.uid);
         const url = req.body.url;
+        const productid = req.body.productid;
         const response = await limitedFetch(url);
         if (!response.ok) {
             throw new Error(`Error fetching! status: ${response.status}`);
         }
 
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const megabytes = buffer.length / 1024 / 1024;
+
         const sourceLength = response.headers.get('source-length');
 
         const sizeInMB = parseInt(sourceLength) / 1000000
         let length = parseFloat(sizeInMB.toFixed(2));
+        if (productid === "1") {
+            length = parseFloat(megabytes.toFixed(2))
+        }
+        const uint8Array = new Uint8Array(buffer);
+        const header = uint8Array.subarray(0, 4);
+        let extension:Extenstion;
+        if (header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4E && header[3] === 0x47) {
+            extension = Extenstion.PNG;
+        } else if (header[0] === 0xFF && header[1] === 0xD8 && header[2] === 0xFF) {
+            extension = Extenstion.GPEG;
+        } else {
+            extension = Extenstion.OTHERS;
+        }
         const data = await db.image.update({
             where: {
                 uid
             },
             data: {
-                size: length
+                size: length,
+                extension
             }
         })
-        console.log("calculate size : ", uid, length)
+        console.log("calculate size : ", uid, length,extension)
         res.status(200).json({ data });
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })

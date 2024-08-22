@@ -119,7 +119,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ url: imageRes.url })
+                        body: JSON.stringify({ url: imageRes.url, productid: imageRes.productId })
                     })
                 }
 
