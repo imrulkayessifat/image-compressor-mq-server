@@ -64,7 +64,7 @@ export const caculateImageSize = async (req: Request, res: Response): Promise<vo
         }
         const uint8Array = new Uint8Array(buffer);
         const header = uint8Array.subarray(0, 4);
-        let extension:Extenstion;
+        let extension: Extenstion;
         if (header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4E && header[3] === 0x47) {
             extension = Extenstion.PNG;
         } else if (header[0] === 0xFF && header[1] === 0xD8 && header[2] === 0xFF) {
@@ -81,7 +81,7 @@ export const caculateImageSize = async (req: Request, res: Response): Promise<vo
                 extension
             }
         })
-        console.log("calculate size : ", uid, length,extension)
+        console.log("calculate size : ", uid, length, extension)
         res.status(200).json({ data });
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
@@ -148,7 +148,7 @@ export const getImageStatus = async (req: Request, res: Response): Promise<void>
 export const compressImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { uid, productid, url, storeName, size } = compressData;
+        const { uid, productid, url, storeName, size, extension } = compressData;
 
         await db.image.update({
             where: { uid: parseInt(uid) },
@@ -167,7 +167,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
                 const queue = 'shopify_to_compressor';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ uid, productid, url, storeName, size });
+                const data = JSON.stringify({ uid, productid, url, storeName, size, extension });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to shopify_to_compressor %s", uid);
 
@@ -261,7 +261,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
             })
 
             for (const image of allImages) {
-                const { uid, productId, url, size } = image;
+                const { uid, productId, url, size, extension } = image;
                 await db.image.update({
                     where: { uid: uid },
                     data: { status: 'ONGOING' },
@@ -283,7 +283,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                         const queue = 'auto_compression';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ uid, productId, url, store_name, size });
+                        const data = JSON.stringify({ uid, productId, url, store_name, size, extension });
                         channel.sendToQueue(queue, Buffer.from(data));
                         console.log(" [x] Sent %s", uid);
 
