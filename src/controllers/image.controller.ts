@@ -155,8 +155,8 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
             where: { uid: parseInt(uid) },
             data: { status: 'ONGOING' },
         });
-        const uniqueEventId = `${productid}_${uid}`;
-        io.emit('image_model', { eventId: uniqueEventId, productid, imageId: uid }, () => {
+        
+        io.emit('image_model', () => {
             console.log('an event occured in auto compression');
         });
 
@@ -271,8 +271,8 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                     where: { uid: uid },
                     data: { status: 'ONGOING' },
                 });
-                const uniqueEventId = `${productId}_${uid}`;
-                io.emit('image_model', { eventId: uniqueEventId, productId, imageId: uid }, () => {
+                
+                io.emit('image_model', () => {
                     console.log('an event occured in auto compression');
                 });
 
@@ -340,9 +340,8 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
                     where: { uid: uid },
                     data: { status: 'RESTORING' },
                 });
-                const uniqueEventId = `${productId}_${uid}`;
 
-                io.emit('image_model', { eventId: uniqueEventId, productId, imageId: uid }, () => {
+                io.emit('image_model', () => {
                     console.log('an event occured in auto restore');
                 });
 
