@@ -273,6 +273,7 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
 
 export const altRename = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
@@ -351,6 +352,22 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
                 altRename: true
             }
         })
+
+        const image = {
+            alt: altrename
+        }
+
+
+        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': access_token
+            },
+            body: JSON.stringify({ image })
+        });
+
+        const data = await response.json();
 
         io.emit('image_model', () => {
             console.log('an event occured in alt rename');
@@ -457,6 +474,8 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
 
 export const restoreAltTag = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
+        const storeName = req.header('Shop')
         const restoreId = req.body.restoreId;
 
         const restoreImageData = await db.backupaltname.findFirst({
@@ -465,7 +484,7 @@ export const restoreAltTag = async (req: Request, res: Response): Promise<void> 
             }
         })
 
-        const updateFileName = await db.image.update({
+        const updateAltName = await db.image.update({
             where: {
                 uid: parseInt(restoreId)
             },
@@ -476,11 +495,26 @@ export const restoreAltTag = async (req: Request, res: Response): Promise<void> 
         })
 
 
-        const data = await db.backupaltname.delete({
+        const deleted = await db.backupaltname.delete({
             where: {
                 restoreId
             }
         })
+
+        const image = {
+            alt:updateAltName.alt
+        }
+
+        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateAltName.productId}/images/${updateAltName.id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': access_token
+            },
+            body: JSON.stringify({ image })
+        });
+
+        const data = await response.json();
 
         res.status(200).json({ data })
     } catch (e) {
