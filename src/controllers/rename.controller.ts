@@ -222,6 +222,8 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
 
 export const restoreFileName = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
+        const storeName = req.header('Shop')
         const restoreId = req.body.restoreId;
 
         const restoreImageData = await db.backupfilename.findFirst({
@@ -240,11 +242,26 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
             }
         })
 
-        const data = await db.backupfilename.delete({
+        const deleted = await db.backupfilename.delete({
             where: {
                 restoreId
             }
         })
+
+        const image = {
+            alt:updateFileName.name
+        }
+
+        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': access_token
+            },
+            body: JSON.stringify({ image })
+        });
+
+        const data = await response.json();
 
         res.status(200).json({ data })
     } catch (e) {
