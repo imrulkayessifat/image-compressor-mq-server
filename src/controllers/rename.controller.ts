@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { io } from "../index";
+import { rateLimiter } from "../middleware/rate-limiter";
 
 const db = new PrismaClient();
 
@@ -18,6 +19,7 @@ interface FileRenameProps {
 
 export const fileRename = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
