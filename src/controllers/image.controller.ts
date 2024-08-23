@@ -148,14 +148,15 @@ export const getImageStatus = async (req: Request, res: Response): Promise<void>
 export const compressImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
+        const access_token = req.header('Authorization')
         const { uid, productid, url, storeName, size, extension } = compressData;
-        console.log('comressImage', extension)
+        console.log('access_token', access_token)
 
         await db.image.update({
             where: { uid: parseInt(uid) },
             data: { status: 'ONGOING' },
         });
-        
+
         io.emit('image_model', () => {
             console.log('an event occured in auto compression');
         });
@@ -271,7 +272,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                     where: { uid: uid },
                     data: { status: 'ONGOING' },
                 });
-                
+
                 io.emit('image_model', () => {
                     console.log('an event occured in auto compression');
                 });
