@@ -173,7 +173,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
                 const queue = 'shopify_to_compressor';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ uid, productid, url, storeName, size, extension });
+                const data = JSON.stringify({ uid, productid, url, storeName, size, extension, access_token });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to shopify_to_compressor %s", uid);
 
@@ -193,6 +193,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
 
 export const restoreImage = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const compressData = req.body;
         const { uid, productid, store_name } = compressData;
 
@@ -230,7 +231,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
                 const queue = 'restore_image';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ uid, productid, url, store_name });
+                const data = JSON.stringify({ uid, productid, url, store_name, access_token });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent %s", uid);
 
@@ -250,6 +251,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
 
 export const autoCompression = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const { store_name } = req.body;
 
         const allProducts = await db.product.findMany({
@@ -289,7 +291,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                         const queue = 'auto_compression';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ uid, productId, url, store_name, size, extension });
+                        const data = JSON.stringify({ uid, productId, url, store_name, size, extension, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
                         console.log(" [x] Sent %s", uid);
 
@@ -310,6 +312,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
 
 export const autoRestore = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const { store_name } = req.body;
 
         const allProducts = await db.product.findMany({
@@ -358,7 +361,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
                         const queue = 'auto_restore';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ uid, productId, url, store_name });
+                        const data = JSON.stringify({ uid, productId, url, store_name, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
                         console.log(" [x] Restore Sent %s", uid);
 
@@ -483,7 +486,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
 export const uploadImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { uid, productid, compressedBuffer, storeName } = compressData;
+        const { uid, productid, compressedBuffer, storeName, access_token } = compressData;
 
 
         amqp.connect('amqp://localhost', (error0, connection) => {
@@ -498,7 +501,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 const queue = 'compressor_to_uploader';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ uid, productid, compressedBuffer, storeName });
+                const data = JSON.stringify({ uid, productid, compressedBuffer, storeName, access_token });
 
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Sent to compressor_to_uploader %s", uid);
@@ -520,7 +523,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
 export const restoreUploadImage = async (req: Request, res: Response): Promise<void> => {
     try {
         const compressData = req.body;
-        const { uid, productid, url, store_name } = compressData;
+        const { uid, productid, url, store_name, access_token } = compressData;
 
         amqp.connect('amqp://localhost', (error0, connection) => {
             if (error0) {
@@ -534,7 +537,7 @@ export const restoreUploadImage = async (req: Request, res: Response): Promise<v
                 const queue = 'restore_to_uploader';
                 channel.assertQueue(queue, { durable: false });
 
-                const data = JSON.stringify({ uid, productid, url, store_name });
+                const data = JSON.stringify({ uid, productid, url, store_name, access_token });
                 channel.sendToQueue(queue, Buffer.from(data));
                 console.log(" [x] Restore_Uploader Sent %s", uid);
 
