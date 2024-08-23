@@ -99,6 +99,22 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             }
         })
 
+        const image = {
+            alt: imageRename
+        }
+
+
+        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': access_token
+            },
+            body: JSON.stringify({ image })
+        });
+
+        const data = await response.json();
+
         io.emit('image_model', () => {
             console.log('an event occured in file rename');
         });
