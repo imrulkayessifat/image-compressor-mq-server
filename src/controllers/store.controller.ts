@@ -203,6 +203,7 @@ export const updateStoreAutoCompression = async (req: Request, res: Response): P
 
 export const updateStoreAutoFileRename = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const response = await db.store.update({
             where: {
                 name: req.body.store_name
@@ -218,7 +219,7 @@ export const updateStoreAutoFileRename = async (req: Request, res: Response): Pr
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ store_name: req.body.store_name })
+                body: JSON.stringify({ store_name: req.body.store_name, access_token })
             })
         }
 
@@ -231,6 +232,7 @@ export const updateStoreAutoFileRename = async (req: Request, res: Response): Pr
 
 export const updateStoreAutoAltRename = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const response = await db.store.update({
             where: {
                 name: req.body.store_name
@@ -246,7 +248,7 @@ export const updateStoreAutoAltRename = async (req: Request, res: Response): Pro
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ store_name: req.body.store_name })
+                body: JSON.stringify({ store_name: req.body.store_name, access_token })
             })
         }
         res.status(200).json({ response })

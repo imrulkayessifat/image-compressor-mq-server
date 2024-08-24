@@ -382,7 +382,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
 
 export const autoFileRename = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { store_name } = req.body;
+        const { store_name, access_token } = req.body;
 
         const allProducts = await db.product.findMany({
             where: {
@@ -413,7 +413,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
                         const queue = 'auto_file_rename';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ uid, store_name });
+                        const data = JSON.stringify({ uid, store_name, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
                         console.log(" [x] Auto File Rename Sent %s", uid);
 
@@ -434,7 +434,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
 
 export const autoAltRename = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { store_name } = req.body;
+        const { store_name, access_token } = req.body;
         const allProducts = await db.product.findMany({
             where: {
                 storename: store_name
@@ -464,7 +464,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
                         const queue = 'auto_alt_rename';
                         channel.assertQueue(queue, { durable: false });
 
-                        const data = JSON.stringify({ uid, store_name });
+                        const data = JSON.stringify({ uid, store_name, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
                         console.log(" [x] Auto Alt Rename Sent %s", uid);
 

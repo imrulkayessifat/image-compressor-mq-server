@@ -129,6 +129,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
 export const autoFileRename = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
@@ -208,6 +209,22 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
             }
         })
 
+        const image = {
+            alt: imageRename
+        }
+
+
+        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': access_token
+            },
+            body: JSON.stringify({ image })
+        });
+
+        const data = await response.json();
+
         io.emit('image_model', () => {
             console.log('an event occured in file rename');
         });
@@ -249,7 +266,7 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
         })
 
         const image = {
-            alt:updateFileName.name
+            alt: updateFileName.name
         }
 
         const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
@@ -382,6 +399,7 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
 export const autoAltRename = async (req: Request, res: Response): Promise<void> => {
     try {
+        const access_token = req.header('Authorization')
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
@@ -461,6 +479,22 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
             }
         })
 
+        const image = {
+            alt: altrename
+        }
+
+
+        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Shopify-Access-Token': access_token
+            },
+            body: JSON.stringify({ image })
+        });
+
+        const data = await response.json();
+
         io.emit('image_model', () => {
             console.log('an event occured in alt rename');
         });
@@ -502,7 +536,7 @@ export const restoreAltTag = async (req: Request, res: Response): Promise<void> 
         })
 
         const image = {
-            alt:updateAltName.alt
+            alt: updateAltName.alt
         }
 
         const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateAltName.productId}/images/${updateAltName.id}.json`, {
