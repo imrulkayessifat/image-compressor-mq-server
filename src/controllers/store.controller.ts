@@ -100,6 +100,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                 console.log("image exist", imageExist)
 
                 if (!imageExist) {
+                    console.log("concurrent created")
                     const imageRes = await db.image.create({
                         data: {
                             id: imageIdStr,
