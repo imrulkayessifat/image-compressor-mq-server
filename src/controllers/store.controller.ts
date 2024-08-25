@@ -54,78 +54,91 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             console.log("altname created")
         }
 
-        const productsReq = await fetch(`https://${req.body.storeName}/admin/api/2024-04/products.json`, {
-            headers: {
-                'X-Shopify-Access-Token': `${access_token}`,
-            },
-        })
+        console.log("autoFetch", response)
 
-        const { products } = await productsReq.json();
-
-        console.log("get products")
-
-        for (const product of products) {
-
-            const { id, images } = product
-
-            const productExits = await db.product.findFirst({
-                where: {
-                    id: id.toString()
-                }
+        if (response.autoFetch) {
+            const productsReq = await fetch(`https://${req.body.storeName}/admin/api/2024-04/products.json`, {
+                headers: {
+                    'X-Shopify-Access-Token': `${access_token}`,
+                },
             })
 
-            if (!productExits) {
-                const productRes = await db.product.create({
-                    data: {
-                        id: id.toString(),
-                        storename: req.body.storeName,
-                        title: product.title.replace(/\.([^\s])/g, ". $1").replace(/\./g, ""),
-                        product_title: product.title.replace(/\.([^\s])/g, ". $1").replace(/\./g, ""),
-                    }
-                })
-            }
+            const { products } = await productsReq.json();
 
-            for (const image of images) {
-                const { id: imageId, src: url, alt } = image
-                const imageIdStr = imageId.toString();
-                const newUrl = new URL(url);
-                const name = newUrl.pathname.split('/').pop() || null;
+            console.log("get products")
 
-                const imageExist = await db.image.findFirst({
+            for (const product of products) {
+
+                const { id, images } = product
+
+                const productExits = await db.product.findFirst({
                     where: {
-                        id: imageIdStr
+                        id: id.toString()
                     }
                 })
 
-                console.log("image exist", imageExist)
-
-                if (!imageExist) {
-                    console.log("concurrent created")
-                    const imageRes = await db.image.create({
+                if (!productExits) {
+                    const productRes = await db.product.create({
                         data: {
-                            id: imageIdStr,
-                            url,
-                            name: name,
-                            alt: name,
-                            fileRename: false,
-                            altRename: false,
-                            productId: id.toString(),
-                            status: 'NOT_COMPRESSED',
-                            storename: `${req.body.storeName}`
+                            id: id.toString(),
+                            storename: req.body.storeName,
+                            title: product.title.replace(/\.([^\s])/g, ". $1").replace(/\./g, ""),
+                            product_title: product.title.replace(/\.([^\s])/g, ". $1").replace(/\./g, ""),
                         }
                     })
-                    console.log("image created")
-                    fetch(`${process.env.MQSERVER}/image/${imageRes.uid}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ url: imageRes.url, productid: imageRes.productId })
+                }
+
+                for (const image of images) {
+                    const { id: imageId, src: url, alt } = image
+                    const imageIdStr = imageId.toString();
+                    const newUrl = new URL(url);
+                    const name = newUrl.pathname.split('/').pop() || null;
+
+                    const imageExist = await db.image.findFirst({
+                        where: {
+                            id: imageIdStr
+                        }
                     })
+
+                    console.log("image exist", imageExist)
+
+                    if (!imageExist) {
+                        console.log("concurrent created")
+                        const imageRes = await db.image.create({
+                            data: {
+                                id: imageIdStr,
+                                url,
+                                name: name,
+                                alt: name,
+                                fileRename: false,
+                                altRename: false,
+                                productId: id.toString(),
+                                status: 'NOT_COMPRESSED',
+                                storename: `${req.body.storeName}`
+                            }
+                        })
+                        console.log("image created")
+                        fetch(`${process.env.MQSERVER}/image/${imageRes.uid}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ url: imageRes.url, productid: imageRes.productId })
+                        })
+                    }
+
                 }
 
             }
 
+            await db.store.update({
+                where:{
+                    name: `${req.body.storeName}`
+                },
+                data:{
+                    autoFetch:false
+                }
+            })
         }
 
         console.log("store response", response)
