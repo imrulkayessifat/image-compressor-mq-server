@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 
 import * as jwt from 'jsonwebtoken'
+import { io } from "../index";
 
 const db = new PrismaClient();
 
@@ -132,13 +133,17 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             }
 
             await db.store.update({
-                where:{
+                where: {
                     name: `${req.body.storeName}`
                 },
-                data:{
-                    autoFetch:false
+                data: {
+                    autoFetch: false
                 }
             })
+            
+            io.emit('image_model', () => {
+                console.log('an event occured in auto compression');
+            });
         }
 
         console.log("store response", response)
