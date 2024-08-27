@@ -77,6 +77,7 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
                 },
                 data: {
                     plan: data.recurring_application_charge.name,
+                    dataUsed:0,
                     chargeId: chargeId
                 }
             })
