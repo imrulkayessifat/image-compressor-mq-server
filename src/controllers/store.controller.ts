@@ -140,10 +140,12 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                     autoFetch: false
                 }
             })
-            
-            io.emit('image_model', () => {
-                console.log('an event occured in auto compression');
-            });
+
+            setTimeout(() => {
+                io.emit('image_model', () => {
+                    console.log('an event occured in auto compression');
+                });
+            }, 2000)
         }
 
         console.log("store response", response)
