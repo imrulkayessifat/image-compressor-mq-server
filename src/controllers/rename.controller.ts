@@ -89,6 +89,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
         const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
 
+        console.log("file name:", imageRename)
         const updateImageName = await db.image.update({
             where: {
                 uid: parseInt(uid)
@@ -100,7 +101,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         })
 
         const image = {
-            fileRename: imageRename
+            filename: imageRename
         }
 
 
