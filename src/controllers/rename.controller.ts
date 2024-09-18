@@ -100,7 +100,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         })
 
         const image = {
-            alt: imageRename
+            fileRename: imageRename
         }
 
 
