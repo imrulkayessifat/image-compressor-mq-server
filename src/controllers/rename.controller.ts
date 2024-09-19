@@ -124,6 +124,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         const image = {
             filename: imageRename,
             attachment: base64Image,
+            alt: imageReq.alt,
             metafields: [
                 {
                     key: "filename",
@@ -261,6 +262,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
         const image = {
             filename: imageRename,
             attachment: base64Image,
+            alt: imageReq.alt,
             metafields: [
                 {
                     key: "filename",
