@@ -456,6 +456,8 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
         const data = await response.json();
 
+        console.log("alt rename :",data)
+
         io.emit('image_model', () => {
             console.log('an event occured in alt rename');
         });
