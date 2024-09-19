@@ -250,21 +250,48 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
             }
         })
 
-        const image = {
-            alt: imageRename
+        const imagePath = await limitedFetch(imageReq.url);
+        if (!imagePath.ok) {
+            throw new Error(`Error fetching! status: ${imagePath.status}`);
         }
 
+        const arrayBuffer = await imagePath.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64Image = Buffer.from(buffer).toString('base64');
+        const image = {
+            filename: imageRename,
+            attachment: base64Image,
+            metafields: [
+                {
+                    key: "filename",
+                    value: `${uid}-name`,
+                    type: "string",
+                    namespace: "custom"
+                }
+            ]
+        }
 
-        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
-            method: 'PUT',
+        const deleteImage = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Shopify-Access-Token': access_token
-            },
-            body: JSON.stringify({ image })
+            }
         });
+        const deleteImageRes = await deleteImage.json();
 
-        const data = await response.json();
+        if (deleteImage.status === 200) {
+            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Shopify-Access-Token': access_token
+                },
+                body: JSON.stringify({ image })
+            });
+
+            const data = await response.json();
+        }
 
         io.emit('image_model', () => {
             console.log('an event occured in file rename');
