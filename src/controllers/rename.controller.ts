@@ -144,7 +144,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         const deleteImageRes = await deleteImage.json();
 
         if (deleteImage.status === 200) {
-            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images.json`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -281,7 +281,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
         const deleteImageRes = await deleteImage.json();
 
         if (deleteImage.status === 200) {
-            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
+            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images.json`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
