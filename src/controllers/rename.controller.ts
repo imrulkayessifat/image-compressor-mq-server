@@ -3,6 +3,19 @@ import { Request, Response } from "express";
 import { io } from "../index";
 import { rateLimiter } from "../middleware/rate-limiter";
 
+import Bottleneck from "bottleneck";
+
+const limiter = new Bottleneck({
+    minTime: 200, // 500ms delay between requests
+    // maxConcurrent: 1 // Ensures only one request is processed at a time
+});
+
+const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.Response> = limiter.wrap(
+    (url: string, options?: RequestInit): Promise<globalThis.Response> => {
+        return fetch(url, options);
+    }
+);
+
 const db = new PrismaClient();
 
 interface FileRenameProps {
@@ -100,13 +113,30 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             }
         })
 
+        const imagePath = await limitedFetch(imageReq.url);
+        if (!imagePath.ok) {
+            throw new Error(`Error fetching! status: ${imagePath.status}`);
+        }
+
+        const arrayBuffer = await imagePath.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64Image = Buffer.from(buffer).toString('base64');
         const image = {
-            filename: imageRename
+            filename: imageRename,
+            attachment: base64Image,
+            metafields: [
+                {
+                    key: "filename",
+                    value: `${uid}-name`,
+                    type: "string",
+                    namespace: "custom"
+                }
+            ]
         }
 
 
         const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${imageReq.productId}/images/${imageReq.id}.json`, {
-            method: 'PUT',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Shopify-Access-Token': access_token
