@@ -369,6 +369,8 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
 
         const data = await response.json();
 
+        console.log("restore response",response)
+
         res.status(200).json({ data })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
