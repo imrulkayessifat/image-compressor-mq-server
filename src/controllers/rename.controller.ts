@@ -101,18 +101,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             .join('-');
 
         const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
-
-
-        const updateImageName = await db.image.update({
-            where: {
-                uid: parseInt(uid)
-            },
-            data: {
-                name: imageRename,
-                fileRename: true
-            }
-        })
-
+    
         const imagePath = await limitedFetch(imageReq.url);
         if (!imagePath.ok) {
             throw new Error(`Error fetching! status: ${imagePath.status}`);
@@ -161,7 +150,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
         });
 
-        res.status(200).json({ data: updateImageName })
+        res.status(200).json({ data: "file rename" })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
@@ -241,16 +230,6 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
 
         const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
 
-        const updateImageName = await db.image.update({
-            where: {
-                uid: parseInt(uid)
-            },
-            data: {
-                name: imageRename,
-                fileRename: true
-            }
-        })
-
         const imagePath = await limitedFetch(imageReq.url);
         if (!imagePath.ok) {
             throw new Error(`Error fetching! status: ${imagePath.status}`);
@@ -299,7 +278,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
 
         });
 
-        res.status(200).json({ data: updateImageName })
+        res.status(200).json({ data: 'file rename' })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
@@ -319,14 +298,11 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
             }
         })
 
-        const updateFileName = await db.image.update({
+        const updateFileName = await db.image.findUnique({
             where: {
                 uid: parseInt(restoreId)
             },
-            data: {
-                name: restoreImageData.name,
-                fileRename: false
-            }
+            
         })
 
         const deleted = await db.backupfilename.delete({
@@ -349,7 +325,7 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
             alt: updateFileName.alt,
             metafields: [
                 {
-                    key: "filename",
+                    key: "restorefilename",
                     value: `${restoreId}-name`,
                     type: "string",
                     namespace: "custom"
@@ -383,8 +359,6 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
-
-
 }
 
 export const altRename = async (req: Request, res: Response): Promise<void> => {
