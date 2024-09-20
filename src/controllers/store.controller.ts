@@ -119,7 +119,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                             }
                         })
                         
-                        fetch(`${process.env.MQSERVER}/image/${imageRes.uid}`, {
+                        await fetch(`${process.env.MQSERVER}/image/${imageRes.uid}`, {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
