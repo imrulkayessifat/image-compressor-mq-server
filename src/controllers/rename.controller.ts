@@ -530,7 +530,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
             await db.backupaltname.create({
                 data: {
                     restoreId: `${imageReq.uid}`,
-                    alt: imageReq.alt
+                    alt: imageReq.alt ? imageReq.alt : ''
                 }
             })
         }
