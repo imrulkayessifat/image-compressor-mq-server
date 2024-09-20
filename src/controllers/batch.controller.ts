@@ -26,7 +26,7 @@ export const getBatchCompressImages = async (req: Request, res: Response): Promi
         }
         res.status(200).json({ batch_compress_images_length: length });
     } catch (e) {
-        console.log(e);
+
         res.status(400).json({ error: 'something went wrong!' })
     }
 };
@@ -43,7 +43,6 @@ export const batchCompressImages = async (req: Request, res: Response): Promise<
             }
         })
 
-        console.log("batch compress : ", req.header('Authorization'), req.header('Shop'))
 
         const data = fetch(`${process.env.MQSERVER}/image/auto-compression`, {
             method: 'POST',
@@ -98,7 +97,7 @@ export const batchRestoreImages = async (req: Request, res: Response): Promise<v
             }
         })
 
-        console.log("batch restore : ", req.header('Authorization'), req.header('Shop'))
+
         const data = fetch(`${process.env.MQSERVER}/image/auto-restore`, {
             method: 'POST',
             headers: {

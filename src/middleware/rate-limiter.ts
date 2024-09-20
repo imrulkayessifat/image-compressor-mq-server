@@ -22,11 +22,11 @@ export const rateLimiter = async (url: string, options?: RequestInit, attempt: n
         const retryAfterHeader = response.headers.get('Retry-After');
 
         const [currentCalls, maxCalls] = callLimitHeader.split('/').map(Number);
-        console.log(`rate limiting : ${currentCalls}/${maxCalls}`);
+        
 
         if (response.status === 429 || (currentCalls >= maxCalls && retryAfterHeader)) {
-            console.log("Rate limit exceeded. Retrying after delay.");
-            console.log("retryAfterHeader : ", retryAfterHeader);
+            
+            
             const retryAfter = retryAfterHeader ? parseFloat(retryAfterHeader) : backoffFactor * attempt;
             await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
             return rateLimiter(url, options, attempt + 1);

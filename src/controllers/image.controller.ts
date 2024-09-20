@@ -81,7 +81,7 @@ export const caculateImageSize = async (req: Request, res: Response): Promise<vo
                 extension
             }
         })
-        console.log("calculate size : ", uid, length, extension)
+        
         res.status(200).json({ data });
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
@@ -150,7 +150,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
         const compressData = req.body;
         const access_token = req.header('Authorization')
         const { uid, productid, url, storeName, size, extension } = compressData;
-        console.log('access_token', access_token)
+        
 
         await db.image.update({
             where: { uid: parseInt(uid) },
@@ -158,7 +158,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
         });
 
         io.emit('image_model', () => {
-            console.log('an event occured in auto compression');
+            
         });
 
         amqp.connect('amqp://localhost', (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
@@ -175,7 +175,7 @@ export const compressImage = async (req: Request, res: Response): Promise<void> 
 
                 const data = JSON.stringify({ uid, productid, url, storeName, size, extension, access_token });
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent to shopify_to_compressor %s", uid);
+                
 
                 setTimeout(() => {
                     connection.close();
@@ -233,7 +233,7 @@ export const restoreImage = async (req: Request, res: Response): Promise<void> =
 
                 const data = JSON.stringify({ uid, productid, url, store_name, access_token });
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent %s", uid);
+                
 
                 setTimeout(() => {
                     connection.close();
@@ -276,7 +276,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
                 });
 
                 io.emit('image_model', () => {
-                    console.log('an event occured in auto compression');
+                    
                 });
 
                 amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
@@ -293,7 +293,7 @@ export const autoCompression = async (req: Request, res: Response): Promise<void
 
                         const data = JSON.stringify({ uid, productId, url, store_name, size, extension, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
-                        console.log(" [x] Sent %s", uid);
+                        
 
                         setTimeout(() => {
                             connection.close();
@@ -346,7 +346,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
                 });
 
                 io.emit('image_model', () => {
-                    console.log('an event occured in auto restore');
+                    
                 });
 
                 amqp.connect('amqp://localhost', async (error0: any, connection: { createChannel: (arg0: (error1: any, channel: any) => void) => void; close: () => void; }) => {
@@ -363,7 +363,7 @@ export const autoRestore = async (req: Request, res: Response): Promise<void> =>
 
                         const data = JSON.stringify({ uid, productId, url, store_name, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
-                        console.log(" [x] Restore Sent %s", uid);
+                        
 
                         setTimeout(() => {
                             connection.close();
@@ -415,7 +415,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
 
                         const data = JSON.stringify({ uid, store_name, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
-                        console.log(" [x] Auto File Rename Sent %s", uid);
+                        
 
                         setTimeout(() => {
                             connection.close();
@@ -466,7 +466,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
 
                         const data = JSON.stringify({ uid, store_name, access_token });
                         channel.sendToQueue(queue, Buffer.from(data));
-                        console.log(" [x] Auto Alt Rename Sent %s", uid);
+                        
 
                         setTimeout(() => {
                             connection.close();
@@ -504,7 +504,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
                 const data = JSON.stringify({ uid, productid, compressedBuffer, storeName, access_token });
 
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Sent to compressor_to_uploader %s", uid);
+                
 
                 setTimeout(() => {
                     connection.close();
@@ -539,7 +539,7 @@ export const restoreUploadImage = async (req: Request, res: Response): Promise<v
 
                 const data = JSON.stringify({ uid, productid, url, store_name, access_token });
                 channel.sendToQueue(queue, Buffer.from(data));
-                console.log(" [x] Restore_Uploader Sent %s", uid);
+                
 
                 setTimeout(() => {
                     connection.close();

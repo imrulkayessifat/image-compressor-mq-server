@@ -65,9 +65,9 @@ app.get("/", (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('new client connected  from mq server')
+    
     socket.on('disconnect', () => {
-        console.log('client disconnected  from mq server')
+        
     })
 })
 
@@ -107,7 +107,7 @@ const retryPendingTasks = async () => {
             });
 
         } else {
-            console.log('No pending tasks found.');
+            
         }
     } catch (error) {
         console.error("Error retrying pending tasks:", error);
@@ -118,5 +118,5 @@ const retryPendingTasks = async () => {
 
 
 server.listen(port, () => {
-    console.log(`Server up and running on port: ${port}`);
+    
 });

@@ -116,7 +116,7 @@ export const deleteSubscriptionPlan = async (req: Request, res: Response): Promi
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const ids = req.body.ids;
 
-        console.log(ids)
+        
 
         const data = await db.subscriptionPlan.deleteMany({
             where: {

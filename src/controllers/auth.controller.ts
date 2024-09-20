@@ -60,7 +60,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
             success:'admin identified!'
         });
     } catch (e) {
-        console.log(e);
+        
         res.status(500).json({ error: 'Internal server error' }); // Add a response for any unexpected errors
     }
 };

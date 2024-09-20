@@ -102,7 +102,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
         const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
 
-        console.log("file name:", imageRename)
+        
         const updateImageName = await db.image.update({
             where: {
                 uid: parseInt(uid)
@@ -158,7 +158,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         }
 
         io.emit('image_model', () => {
-            console.log('an event occured in file rename');
+            
         });
 
         res.status(200).json({ data: updateImageName })
@@ -296,7 +296,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
         }
 
         io.emit('image_model', () => {
-            console.log('an event occured in file rename');
+            
         });
 
         res.status(200).json({ data: updateImageName })
@@ -485,10 +485,10 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
         const data = await response.json();
 
-        console.log("alt rename :",data)
+        
 
         io.emit('image_model', () => {
-            console.log('an event occured in alt rename');
+            
         });
 
         res.status(200).json({ data: updateImageAltTag })
@@ -597,7 +597,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
         const data = await response.json();
 
         io.emit('image_model', () => {
-            console.log('an event occured in alt rename');
+            
         });
 
         res.status(200).json({ data: updateImageAltTag })

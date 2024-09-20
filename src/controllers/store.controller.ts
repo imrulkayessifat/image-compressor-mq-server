@@ -16,7 +16,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
             }
         })
 
-        console.log("debug : ", response, req.body.storeName, access_token)
+        
 
         if (response === null && req.body.storeName !== "undefined") {
             response = await db.store.create({
@@ -25,7 +25,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                 }
             })
 
-            console.log("store created")
+            
             await db.product.create({
                 data: {
                     id: '1',
@@ -34,7 +34,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                     storename: `${req.body.storeName}`
                 }
             })
-            console.log("product created")
+            
 
             await db.filerename.create({
                 data: {
@@ -43,7 +43,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                 }
             })
 
-            console.log("filename created")
+            
 
             await db.altrename.create({
                 data: {
@@ -52,10 +52,10 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                 }
             })
 
-            console.log("altname created")
+            
         }
 
-        console.log("autoFetch", response)
+        
 
         if (response.autoFetch) {
             const productsReq = await fetch(`https://${req.body.storeName}/admin/api/2024-04/products.json`, {
@@ -66,7 +66,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
 
             const { products } = await productsReq.json();
 
-            console.log("get products")
+            
 
             for (const product of products) {
 
@@ -101,10 +101,10 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                         }
                     })
 
-                    console.log("image exist", imageExist)
+                    
 
                     if (!imageExist) {
-                        console.log("concurrent created")
+                        
                         const imageRes = await db.image.create({
                             data: {
                                 id: imageIdStr,
@@ -118,7 +118,7 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
                                 storename: `${req.body.storeName}`
                             }
                         })
-                        console.log("image created")
+                        
                         fetch(`${process.env.MQSERVER}/image/${imageRes.uid}`, {
                             method: 'PATCH',
                             headers: {
@@ -143,12 +143,12 @@ export const getSingleStoreData = async (req: Request, res: Response): Promise<v
 
             setTimeout(() => {
                 io.emit('image_model', () => {
-                    console.log('an event occured in auto compression');
+                    
                 });
             }, 2000)
         }
 
-        console.log("store response", response)
+        
 
         res.status(200).json({ data: response });
     } catch (e) {

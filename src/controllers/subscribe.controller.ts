@@ -20,8 +20,6 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
             }
         }
 
-        console.log("shop",req.header('Shop'))
-
         const response = await fetch(`https://${req.header('Shop')}/admin/api/2024-04/recurring_application_charges.json`, {
             method: 'POST',
             headers: {
@@ -32,7 +30,7 @@ export const subscribeData = async (req: Request, res: Response): Promise<void> 
         })
         const url = await response.json()
 
-        console.log("subscription url",url)
+        
 
         res.status(201).json({ data: url });
     } catch (e) {
@@ -46,7 +44,7 @@ export const confirmation = async (req: Request, res: Response): Promise<void> =
     try {
         const { shop, charge_id } = req.query;
 
-        console.log("confirmation : ",shop,charge_id)
+        
 
         const accessTokenResponse = await fetch(`${process.env.MQSERVER}/session/${shop}`, {
             method: 'GET',
@@ -97,7 +95,7 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
         const token = req.header('Authorization')
         const { name } = req.body
 
-        console.log('remove', name)
+        
 
         if (!token) {
             res.status(401).json({ error: 'No token,authorization denied!' })
