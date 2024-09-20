@@ -335,22 +335,51 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
             }
         })
 
-        const image = {
-            alt: updateFileName.name
+        const imagePath = await limitedFetch(updateFileName.url);
+        if (!imagePath.ok) {
+            throw new Error(`Error fetching! status: ${imagePath.status}`);
         }
 
-        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
-            method: 'PUT',
+        const arrayBuffer = await imagePath.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64Image = Buffer.from(buffer).toString('base64');
+        const image = {
+            filename: updateFileName.name,
+            attachment: base64Image,
+            alt: updateFileName.alt,
+            metafields: [
+                {
+                    key: "filename",
+                    value: `${restoreId}-name`,
+                    type: "string",
+                    namespace: "custom"
+                }
+            ]
+        }
+
+        const deleteImage = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Shopify-Access-Token': access_token
-            },
-            body: JSON.stringify({ image })
+            }
         });
+        const deleteImageRes = await deleteImage.json();
 
-        const data = await response.json();
+        if (deleteImage.status === 200) {
+            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images.json`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Shopify-Access-Token': access_token
+                },
+                body: JSON.stringify({ image })
+            });
 
-        res.status(200).json({ data })
+            const data = await response.json();
+        }
+
+        res.status(200).json({ updateFileName })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
