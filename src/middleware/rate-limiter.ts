@@ -22,6 +22,7 @@ export const rateLimiter = async (url: string, options?: RequestInit, attempt: n
         const retryAfterHeader = response.headers.get('Retry-After');
 
         const [currentCalls, maxCalls] = callLimitHeader.split('/').map(Number);
+        console.log("url : ", url)
         console.log("response status :", response.status)
 
         if (response.status === 429 || (currentCalls >= maxCalls && retryAfterHeader)) {
