@@ -102,7 +102,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
 
         const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
 
-        
+
         const updateImageName = await db.image.update({
             where: {
                 uid: parseInt(uid)
@@ -158,7 +158,7 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         }
 
         io.emit('image_model', () => {
-            
+
         });
 
         res.status(200).json({ data: updateImageName })
@@ -296,7 +296,7 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
         }
 
         io.emit('image_model', () => {
-            
+
         });
 
         res.status(200).json({ data: updateImageName })
@@ -393,7 +393,7 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
-        console.log("uid",uid)
+        console.log("uid", uid)
 
         const store = await db.store.findFirst({
             where: {
@@ -487,10 +487,10 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
         const data = await response.json();
 
-        
+
 
         io.emit('image_model', () => {
-            
+
         });
 
         res.status(200).json({ data: updateImageAltTag })
@@ -506,6 +506,8 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
+        console.log("uid", uid)
+
         const store = await db.store.findFirst({
             where: {
                 name: storeName
@@ -599,7 +601,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
         const data = await response.json();
 
         io.emit('image_model', () => {
-            
+
         });
 
         res.status(200).json({ data: updateImageAltTag })
