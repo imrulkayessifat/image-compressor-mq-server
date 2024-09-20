@@ -393,6 +393,8 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
+        console.log("uid",uid)
+
         const store = await db.store.findFirst({
             where: {
                 name: storeName
