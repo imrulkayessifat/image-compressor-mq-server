@@ -101,7 +101,18 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             .join('-');
 
         const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
-    
+
+        console.log("file name:", imageRename)
+        const updateImageName = await db.image.update({
+            where: {
+                uid: parseInt(uid)
+            },
+            data: {
+                name: imageRename,
+                fileRename: true
+            }
+        })
+
         const imagePath = await limitedFetch(imageReq.url);
         if (!imagePath.ok) {
             throw new Error(`Error fetching! status: ${imagePath.status}`);
@@ -147,10 +158,10 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
         }
 
         io.emit('image_model', () => {
-
+            console.log('an event occured in file rename');
         });
 
-        res.status(200).json({ data: "file rename" })
+        res.status(200).json({ data: updateImageName })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
@@ -230,6 +241,16 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
 
         const imageRename = `${concatenatedValues}-${uid}.${imageReq?.name?.split('.').pop()}`
 
+        const updateImageName = await db.image.update({
+            where: {
+                uid: parseInt(uid)
+            },
+            data: {
+                name: imageRename,
+                fileRename: true
+            }
+        })
+
         const imagePath = await limitedFetch(imageReq.url);
         if (!imagePath.ok) {
             throw new Error(`Error fetching! status: ${imagePath.status}`);
@@ -275,10 +296,10 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
         }
 
         io.emit('image_model', () => {
-
+            console.log('an event occured in file rename');
         });
 
-        res.status(200).json({ data: 'file rename' })
+        res.status(200).json({ data: updateImageName })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
@@ -298,11 +319,14 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
             }
         })
 
-        const updateFileName = await db.image.findUnique({
+        const updateFileName = await db.image.update({
             where: {
                 uid: parseInt(restoreId)
             },
-            
+            data: {
+                name: restoreImageData.name,
+                fileRename: false
+            }
         })
 
         const deleted = await db.backupfilename.delete({
@@ -319,13 +343,14 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
         const arrayBuffer = await imagePath.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         const base64Image = Buffer.from(buffer).toString('base64');
+
         const image = {
-            filename: updateFileName.name,
+            filename: updateFileName,
             attachment: base64Image,
             alt: updateFileName.alt,
             metafields: [
                 {
-                    key: "restorefilename",
+                    key: "filename",
                     value: `${restoreId}-name`,
                     type: "string",
                     namespace: "custom"
@@ -333,32 +358,23 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
             ]
         }
 
-        const deleteImage = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
-            method: 'DELETE',
+        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Shopify-Access-Token': access_token
-            }
+            },
+            body: JSON.stringify({ image })
         });
-        const deleteImageRes = await deleteImage.json();
 
-        if (deleteImage.status === 200) {
-            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images.json`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Shopify-Access-Token': access_token
-                },
-                body: JSON.stringify({ image })
-            });
+        const data = await response.json();
 
-            const data = await response.json();
-        }
-
-        res.status(200).json({ updateFileName })
+        res.status(200).json({ data })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
+
+
 }
 
 export const altRename = async (req: Request, res: Response): Promise<void> => {
@@ -366,8 +382,6 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
         const access_token = req.header('Authorization')
         const uid = req.body.uid;
         const storeName = req.body.storeName;
-
-        console.log("uid", uid)
 
         const store = await db.store.findFirst({
             where: {
@@ -461,10 +475,10 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
         const data = await response.json();
 
-
+        console.log("alt rename :",data)
 
         io.emit('image_model', () => {
-
+            console.log('an event occured in alt rename');
         });
 
         res.status(200).json({ data: updateImageAltTag })
@@ -480,8 +494,6 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
         const uid = req.body.uid;
         const storeName = req.body.storeName;
 
-        console.log("uid", uid)
-
         const store = await db.store.findFirst({
             where: {
                 name: storeName
@@ -575,7 +587,7 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
         const data = await response.json();
 
         io.emit('image_model', () => {
-
+            console.log('an event occured in alt rename');
         });
 
         res.status(200).json({ data: updateImageAltTag })
