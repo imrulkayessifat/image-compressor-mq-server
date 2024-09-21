@@ -1,13 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { io } from "../index";
+
 import { rateLimiter } from "../middleware/rate-limiter";
 
 import Bottleneck from "bottleneck";
 
 const limiter = new Bottleneck({
-    minTime: 200, // 500ms delay between requests
-    // maxConcurrent: 1 // Ensures only one request is processed at a time
+    minTime: 200,
 });
 
 const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.Response> = limiter.wrap(
@@ -157,16 +156,10 @@ export const fileRename = async (req: Request, res: Response): Promise<void> => 
             const data = await response.json();
         }
 
-        io.emit('image_model', () => {
-            console.log('an event occured in file rename');
-        });
-
         res.status(200).json({ data: updateImageName })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
-
-
 }
 
 export const autoFileRename = async (req: Request, res: Response): Promise<void> => {
@@ -295,10 +288,6 @@ export const autoFileRename = async (req: Request, res: Response): Promise<void>
             const data = await response.json();
         }
 
-        io.emit('image_model', () => {
-            console.log('an event occured in file rename');
-        });
-
         res.status(200).json({ data: updateImageName })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
@@ -345,7 +334,7 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
         const base64Image = Buffer.from(buffer).toString('base64');
 
         const image = {
-            filename: updateFileName,
+            filename: updateFileName.name,
             attachment: base64Image,
             alt: updateFileName.alt,
             metafields: [
@@ -358,24 +347,32 @@ export const restoreFileName = async (req: Request, res: Response): Promise<void
             ]
         }
 
-        const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
-            method: 'PUT',
+        const deleteImage = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images/${updateFileName.id}.json`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Shopify-Access-Token': access_token
-            },
-            body: JSON.stringify({ image })
+            }
         });
+        const deleteImageRes = await deleteImage.json();
 
-        const data = await response.json();
+        if (deleteImage.status === 200) {
+            const response = await rateLimiter(`https://${storeName}/admin/api/2024-01/products/${updateFileName.productId}/images.json`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Shopify-Access-Token': access_token
+                },
+                body: JSON.stringify({ image })
+            });
 
-        console.log("restore response",response)
+            const data = await response.json();
+        }
 
-        res.status(200).json({ data })
+        res.status(200).json({ data: "restore image" })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
-
 
 }
 
@@ -477,11 +474,7 @@ export const altRename = async (req: Request, res: Response): Promise<void> => {
 
         const data = await response.json();
 
-        console.log("alt rename :",data)
-
-        io.emit('image_model', () => {
-            console.log('an event occured in alt rename');
-        });
+        console.log("alt rename :", data)
 
         res.status(200).json({ data: updateImageAltTag })
     } catch (e) {
@@ -588,15 +581,10 @@ export const autoAltRename = async (req: Request, res: Response): Promise<void> 
 
         const data = await response.json();
 
-        io.emit('image_model', () => {
-            console.log('an event occured in alt rename');
-        });
-
         res.status(200).json({ data: updateImageAltTag })
     } catch (e) {
         res.status(400).json({ error: 'something went wrong!' })
     }
-
 }
 
 export const restoreAltTag = async (req: Request, res: Response): Promise<void> => {
