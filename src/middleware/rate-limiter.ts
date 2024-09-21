@@ -1,8 +1,8 @@
 import Bottleneck from "bottleneck";
 
 const limiter = new Bottleneck({
-    minTime: 200, // 500ms delay between requests
-    maxConcurrent: 1 // Ensures only one request is processed at a time
+    minTime: 200,
+    maxConcurrent: 1
 });
 
 const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.Response> = limiter.wrap(
@@ -11,43 +11,37 @@ const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.R
     }
 );
 
-export const rateLimiter = async (url: string, options?: RequestInit, attempt: number = 1): Promise<Response> => {
-    const maxAttempts = 5;
-    const baseDelay = 1000; // 1 second
+export const rateLimiter = async (url: string, options?: RequestInit, maxRetries = 5): Promise<Response> => {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            const response = await limitedFetch(url, options);
 
-    try {
-        let response = await limitedFetch(url, options);
-        const callLimitHeader = response.headers.get('X-Shopify-Shop-Api-Call-Limit') || '0/40';
-        const retryAfterHeader = response.headers.get('Retry-After');
-        const [currentCalls, maxCalls] = callLimitHeader.split('/').map(Number);
-
-        console.log(`Attempt ${attempt} - URL: ${url}`);
-        console.log(`Response status: ${response.status}`);
-        console.log(`Call Limit: ${callLimitHeader}`);
-
-        if (response.status === 429 || currentCalls >= maxCalls) {
-            if (attempt >= maxAttempts) {
-                throw new Error(`Failed after ${attempt} attempts`);
+            // Check if the response is OK (status in the range 200-299)
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const retryAfter = retryAfterHeader ? parseFloat(retryAfterHeader) : 1;
-            const delay = Math.max(retryAfter * 1000, baseDelay * Math.pow(2, attempt - 1));
+            const callLimitHeader = response.headers.get('X-Shopify-Shop-Api-Call-Limit') || '0/40';
+            const [currentCalls, maxCalls] = callLimitHeader.split('/').map(Number);
 
-            console.log(`Rate limited. Retrying after ${delay / 1000} seconds...`);
-            await new Promise((resolve) => setTimeout(resolve, delay));
-            return rateLimiter(url, options, attempt + 1);
-        }
+            console.log(`API Call Limit: ${currentCalls}/${maxCalls}`);
 
-        return response;
-    } catch (error:any) {
-        console.error(`Error on attempt ${attempt}:`, error);
-        if (attempt < maxAttempts) {
-            const delay = baseDelay * Math.pow(2, attempt - 1);
-            console.log(`Retrying after ${delay / 1000} seconds...`);
-            await new Promise((resolve) => setTimeout(resolve, delay));
-            return rateLimiter(url, options, attempt + 1);
-        } else {
-            throw new Error(`Failed after ${attempt} attempts: ${error.message}`);
+            return response;
+        } catch (error: any) {
+            if (error.response?.status === 429) {
+                const retryAfter = parseInt(error.response.headers.get('Retry-After') || '5', 10);
+                console.log(`Rate limited. Retrying after ${retryAfter} seconds. Attempt ${attempt + 1} of ${maxRetries}`);
+                await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+            } else if (attempt === maxRetries - 1) {
+                // If it's the last attempt, throw the error
+                throw error;
+            } else {
+                console.log(`Error occurred: ${error.message}. Retrying... Attempt ${attempt + 1} of ${maxRetries}`);
+                // Add a small delay before retrying to avoid hammering the server
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         }
     }
+
+    throw new Error(`Failed after ${maxRetries} attempts`);
 };
