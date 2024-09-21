@@ -2,7 +2,6 @@ import Bottleneck from "bottleneck";
 
 const limiter = new Bottleneck({
     minTime: 200,
-    maxConcurrent: 1
 });
 
 const limitedFetch: (url: string, options?: RequestInit) => Promise<globalThis.Response> = limiter.wrap(
